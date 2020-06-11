@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "846090468095",
+    "firebase_url": "https://darmawan-f678d.firebaseio.com",
+    "project_id": "darmawan-f678d",
+    "storage_bucket": "darmawan-f678d.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:846090468095:android:f849ecd9e50187dd672aca",
+        "android_client_info": {
+          "package_name": "com.example.ptb"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "846090468095-44uvtjds7tn4o63af5vh31nl9gtuutj0.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCKH3GeD1IPH8YjP8MM1kYMe92QdsCx53w"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "846090468095-lchlqs36lmmil4ae5t2mg5c3aqahvdep.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

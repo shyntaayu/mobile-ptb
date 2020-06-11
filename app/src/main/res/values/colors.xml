@@ -4,4 +4,8 @@
     <color name="colorSplash">#1041ba</color>
     <color name="colorPrimaryDark">#3700B3</color>
     <color name="colorAccent">#03DAC5</color>
+
+    <color name="colorPrimary2">#00796b</color>
+    <color name="colorPrimaryDark2">#00695C</color>
+    <color name="colorAccent2">#FF4081</color>
 </resources>
