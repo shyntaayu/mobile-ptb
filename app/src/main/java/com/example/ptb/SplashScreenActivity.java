@@ -8,13 +8,23 @@ import android.os.Bundle;
 public class SplashScreenActivity extends AppCompatActivity {
 
     private int SPLASH_TIME_OUT = 3000; // 1 sec
+    private SharePreferenceManager spManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash_screen);
-        Intent intent = new Intent(this, ListActivity.class);
-        startActivity(intent);
-        finish();
+
+        spManager = new SharePreferenceManager(this);
+        if(spManager.getSpId()==""){
+            Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
+            startActivity(intent);
+            finish();
+        }
+        else{
+            Intent intent = new Intent(this, MainActivity.class);
+            startActivity(intent);
+            finish();
+        }
     }
 }
