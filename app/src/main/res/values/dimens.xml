@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="pad10">10dp</dimen>
+    <dimen name="val8dp">8dp</dimen>
+    <dimen name="val20dp">20dp</dimen>
+    <dimen name="text20sp">20sp</dimen>
+    <dimen name="val5dp">5dp</dimen>
+</resources>

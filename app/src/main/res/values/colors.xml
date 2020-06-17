@@ -8,4 +8,11 @@
     <color name="colorPrimary2">#00796b</color>
     <color name="colorPrimaryDark2">#00695C</color>
     <color name="colorAccent2">#FF4081</color>
+    <color name="colorBiruBack">#E5E9F4</color>
+    <color name="colorBiruAtas">#6488F8</color>
+    <color name="colorBiruTengah">#7294FF</color>
+    <color name="colorBiruBawah">#698EFF</color>
+    <color name="colorWhite">#FFFFFF</color>
+
+
 </resources>
