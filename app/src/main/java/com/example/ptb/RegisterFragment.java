@@ -133,11 +133,11 @@ public class RegisterFragment extends Fragment {
                                     FirebaseUser user = auth.getCurrentUser();
                                     User userModel = new User();
                                     userModel.setEmail(email);
-                                    userModel.setFullName(name);
-                                    userModel.setCreatedTime(System.currentTimeMillis());
+                                    userModel.setFullname(name);
+                                    userModel.setCreatedtime(System.currentTimeMillis());
                                     userModel.setFoto("http://shyntadarmawan.000webhostapp.com/assets/user.png");
                                     userModel.setPassword(password);
-                                    userModel.setUserName(name);
+                                    userModel.setUsername(name);
 
                                     String key = myRef.push().getKey();
                                     myRef.child(key).setValue(userModel).addOnCompleteListener(new OnCompleteListener<Void>() {
