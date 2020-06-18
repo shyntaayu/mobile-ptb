@@ -14,7 +14,7 @@
         android:layout_width="match_parent"
         android:layout_marginTop="-20dp"
         android:orientation="vertical"
-        android:background="@drawable/bg_custom"
+        android:background="@drawable/bg_custom_home"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         android:layout_height="wrap_content">
@@ -27,7 +27,9 @@
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
-                android:layout_marginTop="@dimen/val20dp"
+                android:layout_marginTop="@dimen/val30dp"
+                android:layout_marginLeft="@dimen/val30dp"
+                android:layout_marginRight="@dimen/val30dp"
                 android:layout_height="match_parent">
                 <de.hdodenhof.circleimageview.CircleImageView
                     android:id="@+id/ivFotoProfilHome"
@@ -35,7 +37,7 @@
                     app:layout_constraintTop_toTopOf="parent"
                     android:layout_width="70dp"
                     android:layout_height="70dp"
-                    android:src="@drawable/logoabu"/>
+                    android:src="@drawable/logoputih"/>
                 <TextView
                     android:textStyle="bold"
                     android:layout_width="wrap_content"
@@ -44,6 +46,7 @@
                     android:layout_marginLeft="@dimen/pad10"
                     android:textColor="@color/colorWhite"
                     android:id="@+id/tvUserLoginHome"
+                    android:textSize="@dimen/sp16"
                     android:text="@string/app_name"
                     app:layout_constraintStart_toEndOf="@+id/ivFotoProfilHome"
                     app:layout_constraintTop_toTopOf="parent"/>
@@ -75,33 +78,42 @@
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 
-            <TextView
-                app:layout_constraintTop_toBottomOf="@id/svTb"
-                app:layout_constraintStart_toStartOf="parent"
-                android:id="@+id/tvsearchHereHome"
-                android:textStyle="bold"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textColor="@color/colorWhite"
-                android:layout_marginTop="@dimen/pad10"
-                android:text="@string/search_here" />
-            <SearchView
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                android:id="@+id/svTbHome"
+            <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
-
-            <TextView
-                app:layout_constraintTop_toBottomOf="@id/svTb"
-                app:layout_constraintStart_toStartOf="parent"
-                android:id="@+id/tvSearchResultHome"
-                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/pad10"
-                android:layout_marginBottom="@dimen/pad10"
-                android:textColor="@color/colorWhite"
-                android:text="@string/search_result" />
+                android:orientation="vertical"
+                android:layout_marginRight="@dimen/val30dp"
+                android:layout_marginLeft="@dimen/val30dp">
+                <TextView
+                    app:layout_constraintTop_toBottomOf="@id/svTb"
+                    app:layout_constraintStart_toStartOf="parent"
+                    android:id="@+id/tvsearchHereHome"
+                    android:textStyle="bold"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/colorWhite"
+                    android:textSize="@dimen/sp16"
+                    android:layout_marginTop="@dimen/pad10"
+                    android:text="@string/search_here" />
+                <SearchView
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintStart_toStartOf="@+id/tvsearchHereHome"
+                    android:id="@+id/svTbHome"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+
+                <TextView
+                    app:layout_constraintTop_toBottomOf="@id/svTb"
+                    app:layout_constraintStart_toStartOf="parent"
+                    android:id="@+id/tvSearchResultHome"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="0dp"
+                    android:layout_marginBottom="@dimen/pad10"
+                    android:textColor="@color/colorWhite"
+                    android:text="@string/search_result" />
+            </LinearLayout>
+
         </LinearLayout>
     </LinearLayout>
     <TextView

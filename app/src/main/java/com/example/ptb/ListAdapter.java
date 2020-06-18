@@ -40,9 +40,11 @@ public class ListAdapter extends RecyclerView.Adapter<ListAdapter.ViewHolder> {
 holder.tvNama.setText(listTb.get(position).getNama());
         holder.tvAlamat.setText(listTb.get(position).getAlamat());
         holder.tvJam.setText(listTb.get(position).getJambuka()+" - "+listTb.get(position).getJamtutup());
-        holder.tvRating.setText(listTb.get(position).getTubles().toString());
+        int rating = listTb.get(position).getTubles()?4:3;
+        holder.tvRating.setText(rating+" Star");
+        holder.tvJarak.setText("Destination : ");
         RequestOptions requestOptions = new RequestOptions();
-        requestOptions.placeholder(R.drawable.logoabu).error(R.drawable.logo_tambal_ban);
+        requestOptions.placeholder(R.drawable.logo_tambal_ban).error(R.drawable.logokuning);
         Glide.with(context).load(listTb.get(position).getFotobengkel()).apply(requestOptions).into(holder.ivFoto);
 
         holder.cvItem.setOnClickListener(new View.OnClickListener() {
@@ -67,7 +69,7 @@ holder.tvNama.setText(listTb.get(position).getNama());
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
-        TextView tvNama, tvAlamat, tvRating, tvJam;
+        TextView tvNama, tvAlamat, tvRating, tvJam, tvJarak;
         ImageView ivFoto;
         CardView cvItem;
         public ViewHolder(@NonNull View itemView) {
@@ -75,6 +77,7 @@ holder.tvNama.setText(listTb.get(position).getNama());
             tvNama = itemView.findViewById(R.id.tvNama);
             tvAlamat = itemView.findViewById(R.id.tvAlamat);
             tvJam = itemView.findViewById(R.id.tvJam);
+            tvJarak = itemView.findViewById(R.id.tvJarak);
             tvRating = itemView.findViewById(R.id.tvRating);
             ivFoto = itemView.findViewById(R.id.ivFoto);
             cvItem = itemView.findViewById(R.id.cvItem);

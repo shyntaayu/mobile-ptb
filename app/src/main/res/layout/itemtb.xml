@@ -16,12 +16,13 @@
         app:cardElevation="@dimen/val8dp">
 
         <ImageView
+            android:background="@color/black"
             android:id="@+id/ivFoto"
             android:layout_width="200dp"
             android:layout_height="200dp"
             android:contentDescription="@string/todo"
             android:scaleType="centerInside"
-            android:src="@drawable/logoabu" />
+            android:src="@drawable/logoputih" />
 
     </androidx.cardview.widget.CardView>
 
@@ -30,12 +31,13 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginLeft="-15dp"
-        android:layout_marginTop="40dp"
+        android:layout_marginTop="@dimen/pad10"
         android:layout_marginRight="@dimen/pad10"
         android:layout_weight="1"
+        app:cardBackgroundColor="@color/colorWhite"
         app:cardCornerRadius="@dimen/val20dp"
-        app:cardPreventCornerOverlap="false"
-        app:cardElevation="@dimen/val8dp">
+        app:cardElevation="@dimen/val8dp"
+        app:cardPreventCornerOverlap="false">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -48,6 +50,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/app_name"
+                android:textColor="@color/colorFont"
                 android:textSize="@dimen/text20sp"
                 android:textStyle="bold" />
 
@@ -56,29 +59,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/val8dp"
+                android:textColor="@color/colorFont"
                 android:text="@string/app_name" />
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/val8dp"
-                android:orientation="horizontal">
-
-                <ImageView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:contentDescription="@string/todo"
-                    android:src="@drawable/ic_jam" />
-
-                <TextView
-                    android:id="@+id/tvJam"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="@dimen/val5dp"
-                    android:layout_marginLeft="@dimen/val5dp"
-                    android:text="@string/app_name" />
-
-            </LinearLayout>
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -96,10 +78,35 @@
                     android:id="@+id/tvRating"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:textColor="@color/colorFont"
                     android:layout_marginStart="@dimen/val5dp"
                     android:layout_marginLeft="@dimen/val5dp"
                     android:text="@string/app_name" />
             </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/val8dp"
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:contentDescription="@string/todo"
+                    android:src="@drawable/ic_jam" />
+
+                <TextView
+                    android:id="@+id/tvJam"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/colorFont"
+                    android:layout_marginStart="@dimen/val5dp"
+                    android:layout_marginLeft="@dimen/val5dp"
+                    android:text="@string/app_name" />
+
+            </LinearLayout>
+
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -119,6 +126,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginStart="@dimen/val5dp"
                     android:layout_marginLeft="@dimen/val5dp"
+                    android:textColor="@color/colorFont"
                     android:text="@string/app_name" />
 
             </LinearLayout>

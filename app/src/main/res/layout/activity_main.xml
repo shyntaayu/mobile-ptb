@@ -30,7 +30,7 @@
         android:layout_marginEnd="0dp"
 
         android:layout_alignParentBottom="true"
-        android:background="@color/colorPrimary"
+        android:background="@color/colorWhite"
         app:itemIconTint="@drawable/state_bnve"
         app:itemTextColor="@drawable/state_bnve"
         app:menu="@menu/bottom_navigation_menu"

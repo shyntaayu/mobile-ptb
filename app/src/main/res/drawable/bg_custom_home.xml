@@ -8,7 +8,7 @@
     android:endColor="@color/colorPrimaryDark"
     android:centerColor="@color/colorPrimaryHalf"
     android:startColor="@color/colorPrimary"
-    android:type="linear" />
+    android:type="linear"/>
 
     <stroke
         android:width="0dp"
@@ -16,7 +16,7 @@
 
     <corners
         android:bottomLeftRadius="@dimen/val30dp"
-        android:bottomRightRadius="0dp"
+        android:bottomRightRadius="@dimen/val30dp"
         android:topLeftRadius="0dp"
         android:topRightRadius="0dp" />
 

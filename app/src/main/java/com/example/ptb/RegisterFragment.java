@@ -6,6 +6,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
+import android.util.Patterns;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -27,6 +28,8 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+
+import java.util.regex.Pattern;
 
 
 /**
@@ -71,10 +74,11 @@ public class RegisterFragment extends Fragment {
         btnRegister.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                final String email = inputEmail.getText().toString();
+                final String email = inputEmail.getText().toString().trim();
                 final String password = inputPassword.getText().toString();
                 final String name = inputName.getText().toString();
                 String repassword = inputRePassword.getText().toString();
+                Pattern emailPattern = Patterns.EMAIL_ADDRESS;
 
                 if (TextUtils.isEmpty(name)) {
 //                    Toast.makeText(getContext(), "Enter name!", Toast.LENGTH_SHORT).show();
@@ -90,6 +94,12 @@ public class RegisterFragment extends Fragment {
                 if (email.length()<4) {
 //                    Toast.makeText(getContext(), "Enter email address, min length 4!", Toast.LENGTH_SHORT).show();
                     inputEmail.setError("Enter email address, min length 4!");
+                    return;
+                }
+
+                if (!emailPattern.matcher(email).matches()) {
+//                    Toast.makeText(getContext(), "Enter email address, min length 4!", Toast.LENGTH_SHORT).show();
+                    inputEmail.setError("Email not valid!");
                     return;
                 }
 
@@ -146,7 +156,7 @@ public class RegisterFragment extends Fragment {
                                             if(task.isSuccessful()){
                                                 Toast.makeText(getContext(), "New account successfully created.",
                                                         Toast.LENGTH_LONG).show();
-                                                startActivity(new Intent(getContext(), MainActivity.class));
+                                                startActivity(new Intent(getContext(), LoginActivity.class));
                                             }else{
                                                 Log.w(TAG, "createUserWithEmail:failure,indb", task.getException());
                                                 Toast.makeText(getContext(), "Failed create account.",

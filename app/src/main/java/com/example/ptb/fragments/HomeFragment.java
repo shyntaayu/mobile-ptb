@@ -4,10 +4,17 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestOptions;
 import com.example.ptb.R;
+import com.example.ptb.SharePreferenceManager;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -19,6 +26,10 @@ public class HomeFragment extends Fragment {
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
+    private SharePreferenceManager spManager;
+    private TextView tvUserName;
+    private ImageView ivFoto;
+    private String fotoProfil = "http://shyntadarmawan.000webhostapp.com/assets/user.png";
 
     // TODO: Rename and change types of parameters
     private String mParam1;
@@ -60,5 +71,19 @@ public class HomeFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_home, container, false);
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+
+        spManager = new SharePreferenceManager(getContext());
+        tvUserName = view.findViewById(R.id.tvUserLoginHome);
+        ivFoto = view.findViewById(R.id.ivFotoProfilHome);
+        tvUserName.setText(spManager.getSPString(SharePreferenceManager.SP_Username,""));
+        RequestOptions requestOptions = new RequestOptions();
+        requestOptions.placeholder(R.drawable.logo_tambal_ban).error(R.drawable.logoputih);
+        Glide.with(getContext()).load(fotoProfil).apply(requestOptions).into(ivFoto);
+
     }
 }
