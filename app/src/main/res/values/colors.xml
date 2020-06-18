@@ -14,5 +14,9 @@
     <color name="colorBiruBawah">#698EFF</color>
     <color name="colorWhite">#FFFFFF</color>
 
+    <color name="colorNavigationIcon">#dae9f6</color>
+    <color name="colorNavigationText">#ffffff</color>
+    <color name="black">#190998</color>
+
 
 </resources>

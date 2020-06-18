@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.widget.SearchView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -88,50 +89,71 @@ public class ListActivity extends AppCompatActivity {
             @Override
             public boolean onQueryTextSubmit(String query) {
                 int SearchIndex = refinedData.indexOf(query);
-                String SearchResult = refinedData.substring(SearchIndex);
-                String SearchSplit[] = SearchResult.split(",");
-                tvSearchresult.setText("Result : "+ SearchSplit[0]);
-                getSearch(SearchSplit[0]);
+                if(SearchIndex!=-1) {
+                    String SearchResult = refinedData.substring(SearchIndex);
+                    String SearchSplit[] = SearchResult.split(",");
+                    tvSearchresult.setText("Result : " + SearchSplit[0]);
+                    getSearch(true, SearchSplit[0]);
+                }else{
+                    tvSearchresult.setText("Result : Data not found");
+                    Toast.makeText(ListActivity.this, "Data not found", Toast.LENGTH_SHORT).show();
+                    getSearch(false, null);
+                }
                 return false;
             }
 
             @Override
             public boolean onQueryTextChange(String newText) {
                 int SearchIndex = refinedData.indexOf(newText);
-                String SearchResult = refinedData.substring(SearchIndex);
-                String SearchSplit[] = SearchResult.split(",");
-                Log.d(TAG, SearchSplit.toString());
-                tvSearchresult.setText("Result : "+ SearchSplit[0]);
-                getSearch(SearchSplit[0]);
+                if(SearchIndex!=-1) {
+                    String SearchResult = refinedData.substring(SearchIndex);
+                    String SearchSplit[] = SearchResult.split(",");
+                    Log.d(TAG, SearchSplit.toString());
+                    tvSearchresult.setText("Result : " + SearchSplit[0]);
+                    getSearch(true,SearchSplit[0]);
+                }else{
+                    tvSearchresult.setText("Result : Data not found");
+                    Toast.makeText(ListActivity.this, "Data not found", Toast.LENGTH_SHORT).show();
+                    getSearch(false, null);
+                }
                 return false;
             }
         });
         // [END read_message]
     }
 
-    public void getSearch(String a){
-        myRef.orderByChild("nama").startAt(a).endAt("~").addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
+    public void getSearch(boolean mustSearch,String a){
+        if(mustSearch){
+            myRef.orderByChild("nama").startAt(a).endAt("~").addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    if (dataSnapshot.getValue() != null) {
+                        Log.d(TAG+"aaaa", dataSnapshot.getValue().toString());
+                        listTb = new ArrayList<>();
+                        for(DataSnapshot tbdataSnapshot : dataSnapshot.getChildren()){
+                            Tambalban tambalban = tbdataSnapshot.getValue(Tambalban.class);
+                            tambalban.setKey(tbdataSnapshot.getKey());
 
-                Log.d(TAG+"aaaa", dataSnapshot.getValue().toString());
-                listTb = new ArrayList<>();
-                for(DataSnapshot tbdataSnapshot : dataSnapshot.getChildren()){
-                    Tambalban tambalban = tbdataSnapshot.getValue(Tambalban.class);
-                    tambalban.setKey(tbdataSnapshot.getKey());
-
-                    listTb.add(tambalban);
+                            listTb.add(tambalban);
+                        }
+                        Log.d(TAG,listTb.size()+"");
+                        adapter = new ListAdapter(listTb, ListActivity.this);
+                        rvList.setAdapter(adapter);
+                    } else {
+                        Toast.makeText(ListActivity.this, "Data not found", Toast.LENGTH_SHORT).show();
+                    }
                 }
-                Log.d(TAG,listTb.size()+"");
-                adapter = new ListAdapter(listTb, ListActivity.this);
-                rvList.setAdapter(adapter);
-            }
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+                    Log.w(TAG, "Failed to read value.", databaseError.toException());
+                }
+            });
+        }else{
+            listTb = new ArrayList<>();
+            adapter = new ListAdapter(listTb, ListActivity.this);
+            rvList.setAdapter(adapter);
+        }
 
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-                Log.w(TAG, "Failed to read value.", databaseError.toException());
-            }
-        });
     }
 
     public static Intent getActIntent(Activity activity){

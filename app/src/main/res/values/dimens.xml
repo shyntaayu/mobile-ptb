@@ -5,4 +5,7 @@
     <dimen name="val20dp">20dp</dimen>
     <dimen name="text20sp">20sp</dimen>
     <dimen name="val5dp">5dp</dimen>
+    <dimen name="val30dp">30dp</dimen>
+    <dimen name="sp16">16sp</dimen>
+    <dimen name="val15dp">15dp</dimen>
 </resources>

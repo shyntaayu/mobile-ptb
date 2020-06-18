@@ -16,8 +16,13 @@
     <string name="product_name">product name</string>
     <string name="price">price</string>
     <string name="insert">insert</string>
-    <string name="search_result">result</string>
+    <string name="search_result">Result . . .</string>
     <string name="search_here">Search Here</string>
     <string name="minimum_password">Password too short, enter minimum 6 characters!</string>
     <string name="auth_failed">Authentication failed, check your email and password or sign up</string>
+    <string name="home">Home</string>
+    <string name="list">List</string>
+    <string name="profile">Profile</string>
+    <string name="account">Account</string>
+    <string name="pilihdarikategori">Pilih dari kategori</string>
 </resources>
