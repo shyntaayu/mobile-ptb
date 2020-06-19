@@ -8,6 +8,8 @@ public class SharePreferenceManager {
     public static final String SP_ID = "spId";
     public static final String SP_Pass = "spPass";
     public static final String SP_Username = "spUsername";
+    public static final String SP_Lat = "spLat";
+    public static final String SP_Lng = "spLng";
 
     public static final String SP_SUDAH_LOGIN = "spSudahLogin";
 
@@ -17,6 +19,11 @@ public class SharePreferenceManager {
     public SharePreferenceManager(Context context){
         sp = context.getSharedPreferences(SP_APP, Context.MODE_PRIVATE);
         spEditor = sp.edit();
+    }
+
+    public void saveSPDouble(String keySP, double value){
+        spEditor.putLong(keySP,  Double.doubleToRawLongBits(value));
+        spEditor.commit();
     }
 
     public void saveSPString(String keySP, String value){
@@ -35,6 +42,9 @@ public class SharePreferenceManager {
     }
     public String getSPString(String key, String t){
         return sp.getString(key, t);
+    }
+    public double getSPDouble(String key, double t){
+        return Double.longBitsToDouble(sp.getLong(key, Double.doubleToLongBits(t)));
     }
     public String getSpId() {
         return sp.getString(SP_ID, "");

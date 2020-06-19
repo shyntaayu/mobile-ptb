@@ -55,7 +55,7 @@ public class ListFragment extends Fragment {
     private String  refinedData;
     private ProgressBar progressBar;
     private SharePreferenceManager spManager;
-    private TextView tvUserName;
+    private TextView tvUserName, tvLocation;
     private ImageView ivFoto;
     private String fotoProfil = "http://shyntadarmawan.000webhostapp.com/assets/user.png";
 
@@ -112,10 +112,15 @@ public class ListFragment extends Fragment {
         spManager = new SharePreferenceManager(getContext());
         tvUserName = view.findViewById(R.id.tvUserLoginList);
         ivFoto = view.findViewById(R.id.ivFotoProfilList);
-        tvUserName.setText(spManager.getSPString(SharePreferenceManager.SP_Username,""));
+        tvLocation = view.findViewById(R.id.tvLocationList);
+        String usernamelogin = spManager.getSPString(SharePreferenceManager.SP_Username,"");
+        String username = usernamelogin!="" ?usernamelogin:"---not yet login---";
+        tvUserName.setText(username);
         RequestOptions requestOptions = new RequestOptions();
         requestOptions.placeholder(R.drawable.logo_tambal_ban).error(R.drawable.logoputih);
         Glide.with(getContext()).load(fotoProfil).apply(requestOptions).into(ivFoto);
+        tvLocation.setText("lat "+spManager.getSPDouble(SharePreferenceManager.SP_Lat,0)+", lng "+spManager.getSPDouble(SharePreferenceManager.SP_Lng,0));
+
     }
 
     public void getData(View view) {
@@ -139,22 +144,26 @@ public class ListFragment extends Fragment {
         myRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                // This method is called once with the initial value and again
-                // whenever data at this location is updated.
-                listTb = new ArrayList<>();
+                if (dataSnapshot.getValue() != null) {
+                    // This method is called once with the initial value and again
+                    // whenever data at this location is updated.
+                    listTb = new ArrayList<>();
 
-                valueDB = dataSnapshot.getValue().toString();
-                refinedData = valueDB.substring(1, valueDB.length()-1);
-                Log.d(TAG, refinedData);
-                for(DataSnapshot tbdataSnapshot : dataSnapshot.getChildren()){
-                    Tambalban tambalban = tbdataSnapshot.getValue(Tambalban.class);
-                    tambalban.setKey(tbdataSnapshot.getKey());
+                    valueDB = dataSnapshot.getValue().toString();
+                    refinedData = valueDB.substring(1, valueDB.length() - 1);
+                    Log.d(TAG, refinedData);
+                    for (DataSnapshot tbdataSnapshot : dataSnapshot.getChildren()) {
+                        Tambalban tambalban = tbdataSnapshot.getValue(Tambalban.class);
+                        tambalban.setKey(tbdataSnapshot.getKey());
 
-                    listTb.add(tambalban);
+                        listTb.add(tambalban);
+                    }
+                    adapter = new ListAdapter(listTb, getContext());
+                    rvList.setAdapter(adapter);
+                    progressBar.setVisibility(View.GONE);
+                }else{
+                    Toast.makeText(getContext(), "Data not found", Toast.LENGTH_SHORT).show();
                 }
-                adapter = new ListAdapter(listTb, getContext());
-                rvList.setAdapter(adapter);
-                progressBar.setVisibility(View.GONE);
             }
 
             @Override

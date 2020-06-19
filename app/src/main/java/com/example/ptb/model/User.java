@@ -22,6 +22,16 @@ public class User {
     @Expose
     private String username;
 
+    public String getKey() {
+        return key;
+    }
+
+    public void setKey(String key) {
+        this.key = key;
+    }
+
+    private String key;
+
     public User(){}
 
     public User(Long createdtime, String email, String foto, String fullname, String password, String username) {

@@ -27,7 +27,7 @@ public class HomeFragment extends Fragment {
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
     private SharePreferenceManager spManager;
-    private TextView tvUserName;
+    private TextView tvUserName, tvLocation;
     private ImageView ivFoto;
     private String fotoProfil = "http://shyntadarmawan.000webhostapp.com/assets/user.png";
 
@@ -79,11 +79,15 @@ public class HomeFragment extends Fragment {
 
         spManager = new SharePreferenceManager(getContext());
         tvUserName = view.findViewById(R.id.tvUserLoginHome);
+        tvLocation = view.findViewById(R.id.tvLocationHome);
         ivFoto = view.findViewById(R.id.ivFotoProfilHome);
-        tvUserName.setText(spManager.getSPString(SharePreferenceManager.SP_Username,""));
+        String usernamelogin = spManager.getSPString(SharePreferenceManager.SP_Username,"");
+        String username = usernamelogin!="" ?usernamelogin:"---not yet login---";
+        tvUserName.setText(username);
         RequestOptions requestOptions = new RequestOptions();
         requestOptions.placeholder(R.drawable.logo_tambal_ban).error(R.drawable.logoputih);
         Glide.with(getContext()).load(fotoProfil).apply(requestOptions).into(ivFoto);
+        tvLocation.setText("lat "+spManager.getSPDouble(SharePreferenceManager.SP_Lat,0)+", lng "+spManager.getSPDouble(SharePreferenceManager.SP_Lng,0));
 
     }
 }
