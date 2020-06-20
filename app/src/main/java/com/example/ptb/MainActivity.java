@@ -1,13 +1,11 @@
 package com.example.ptb;
 
 import android.Manifest;
-import android.content.Intent;
 import android.location.Location;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
 import android.view.MenuItem;
-import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
@@ -48,21 +46,6 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
 //        }
         ActivityCompat.requestPermissions(MainActivity.this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION},123 );
         getLatLng();
-        btnLogout.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                spManager.saveSPString(SharePreferenceManager.SP_Username, "");
-                spManager.saveSPString(SharePreferenceManager.SP_ID, "");
-                spManager.saveSPBoolean(SharePreferenceManager.SP_SUDAH_LOGIN, false);
-                spManager.saveSPDouble(SharePreferenceManager.SP_Lat, 0);
-                spManager.saveSPDouble(SharePreferenceManager.SP_Lng, 0);
-                Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
-                startActivity(intent);
-                finish();
-            }
-        });
-
-
     }
 
     protected void getLatLng() {

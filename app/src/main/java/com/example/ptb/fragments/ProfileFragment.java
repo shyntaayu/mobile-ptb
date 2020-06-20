@@ -6,7 +6,9 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -54,6 +56,8 @@ public class ProfileFragment extends Fragment {
     private ArrayList<Rating> listRating;
     private TextView tvUserName, tvEmail, tvFullName, tvComentar, tvRating;
     private ImageView ivFoto;
+    private Button btnLogout;
+    ProgressBar progressBar;
 
     public ProfileFragment() {
         // Required empty public constructor
@@ -103,16 +107,36 @@ public class ProfileFragment extends Fragment {
         tvEmail = view.findViewById(R.id.tvEmailProfile);
         tvComentar = view.findViewById(R.id.tvComentarCount);
         tvRating = view.findViewById(R.id.tvCountRating);
+        btnLogout = view.findViewById(R.id.btn_logout);
+        progressBar = view.findViewById(R.id.progressBarProfile);
+        progressBar.setVisibility(View.VISIBLE);
 
         init();
+
+        btnLogout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                spManager.saveSPString(SharePreferenceManager.SP_Username, "");
+                spManager.saveSPString(SharePreferenceManager.SP_ID, "");
+                spManager.saveSPBoolean(SharePreferenceManager.SP_SUDAH_LOGIN, false);
+                spManager.saveSPDouble(SharePreferenceManager.SP_Lat, 0);
+                spManager.saveSPDouble(SharePreferenceManager.SP_Lng, 0);
+                Intent intent = new Intent(getContext(), LoginActivity.class);
+                startActivity(intent);
+                getActivity().finish();
+            }
+        });
+        progressBar.setVisibility(View.GONE);
     }
 
     private void init() {
+        progressBar.setVisibility(View.VISIBLE);
         spManager = new SharePreferenceManager(getContext());
         if (spManager.getSpId() == "") {
             Toast.makeText(getContext(), "Please login first, to access this profile", Toast.LENGTH_LONG).show();
             Intent intent = new Intent(getContext(), LoginActivity.class);
             startActivity(intent);
+            getActivity().finish();
         } else {
             mDatabase = FirebaseDatabase.getInstance();
             myRef = mDatabase.getReference();
@@ -130,7 +154,7 @@ public class ProfileFragment extends Fragment {
                             listUser.add(user);
                         }
                         Log.d(TAG, listUser.size() + "");
-                        if(listUser.size()>0){
+                        if (listUser.size() > 0) {
                             showData();
                         }
                     } else {
@@ -145,22 +169,26 @@ public class ProfileFragment extends Fragment {
             });
 
         }
+        progressBar.setVisibility(View.GONE);
     }
 
     private void showData() {
-
+        progressBar.setVisibility(View.VISIBLE);
         Log.d(TAG, listUser.size() + "");
         tvUserName.setText(listUser.get(0).getUsername());
         tvFullName.setText(listUser.get(0).getFullname());
         tvEmail.setText(listUser.get(0).getEmail());
         RequestOptions requestOptions = new RequestOptions();
         requestOptions.placeholder(R.drawable.logo_tambal_ban).error(R.drawable.logoputih);
+        Log.d(TAG+"aaaa", listUser.get(0).getFoto());
         Glide.with(getContext()).load(listUser.get(0).getFoto()).apply(requestOptions).into(ivFoto);
         getComentarCount(listUser.get(0).getKey());
         getRatingCount(listUser.get(0).getKey());
+        progressBar.setVisibility(View.GONE);
     }
 
     private int getComentarCount(String id) {
+        progressBar.setVisibility(View.VISIBLE);
         myRef.child("komentars").orderByChild("userID").equalTo(id).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -173,7 +201,7 @@ public class ProfileFragment extends Fragment {
                         komentar.setKey(tbdataSnapshot.getKey());
                         listKomentar.add(komentar);
                     }
-                    tvComentar.setText(dataSnapshot.getChildrenCount()+"");
+                    tvComentar.setText(dataSnapshot.getChildrenCount() + "");
                     Log.d(TAG, listKomentar.size() + "jml");
                 } else {
                     Toast.makeText(getContext(), "Data not found", Toast.LENGTH_SHORT).show();
@@ -185,10 +213,12 @@ public class ProfileFragment extends Fragment {
                 Log.w(TAG, "Failed to read value.", databaseError.toException());
             }
         });
+        progressBar.setVisibility(View.GONE);
         return 0;
     }
 
     private void getRatingCount(String id) {
+        progressBar.setVisibility(View.VISIBLE);
         myRef.child("ratings").orderByChild("userID").equalTo(id).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -201,7 +231,7 @@ public class ProfileFragment extends Fragment {
                         rating.setKey(tbdataSnapshot.getKey());
                         listRating.add(rating);
                     }
-                    tvRating.setText(dataSnapshot.getChildrenCount()+"");
+                    tvRating.setText(dataSnapshot.getChildrenCount() + "");
                     Log.d(TAG, listRating.size() + "");
                 } else {
                     Toast.makeText(getContext(), "Data not found", Toast.LENGTH_SHORT).show();
@@ -213,5 +243,6 @@ public class ProfileFragment extends Fragment {
                 Log.w(TAG, "Failed to read value.", databaseError.toException());
             }
         });
+        progressBar.setVisibility(View.GONE);
     }
 }

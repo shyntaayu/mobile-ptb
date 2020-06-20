@@ -25,4 +25,9 @@
     <string name="profile">Profile</string>
     <string name="account">Account</string>
     <string name="pilihdarikategori">Pilih dari kategori</string>
+    <string name="dash">-</string>
+    <string name="rating">Rating</string>
+    <string name="logout">Logout</string>
+    <string name="comentars">Comentars</string>
+    <string name="following">Following</string>
 </resources>

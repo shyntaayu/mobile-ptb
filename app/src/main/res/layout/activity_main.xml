@@ -5,15 +5,15 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:background="@color/colorBiruBack"
     xmlns:app="http://schemas.android.com/apk/res-auto">
-    <Button
-        android:id="@+id/btn_logout"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Logout"
-        tools:layout_editor_absoluteX="158dp"
-        tools:layout_editor_absoluteY="399dp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintBottom_toTopOf="@+id/bn_main"/>
+<!--    <Button-->
+<!--        android:id="@+id/btn_logout"-->
+<!--        android:layout_width="wrap_content"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:text="Logout"-->
+<!--        tools:layout_editor_absoluteX="158dp"-->
+<!--        tools:layout_editor_absoluteY="399dp"-->
+<!--        app:layout_constraintStart_toStartOf="parent"-->
+<!--        app:layout_constraintBottom_toTopOf="@+id/bn_main"/>-->
     <FrameLayout
         android:id="@+id/fl_container"
         android:layout_width="match_parent"
