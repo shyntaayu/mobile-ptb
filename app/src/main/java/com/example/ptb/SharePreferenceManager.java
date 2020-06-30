@@ -10,6 +10,7 @@ public class SharePreferenceManager {
     public static final String SP_Username = "spUsername";
     public static final String SP_Lat = "spLat";
     public static final String SP_Lng = "spLng";
+    public static final String SP_Address = "spAddress";
 
     public static final String SP_SUDAH_LOGIN = "spSudahLogin";
 

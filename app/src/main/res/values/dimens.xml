@@ -13,4 +13,5 @@
     <dimen name="val60dp">60dp</dimen>
     <dimen name="val200dp">200dp</dimen>
     <dimen name="val150dp">150dp</dimen>
+    <dimen name="val20sp">20sp</dimen>
 </resources>

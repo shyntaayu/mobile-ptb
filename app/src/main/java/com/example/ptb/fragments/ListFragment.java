@@ -22,6 +22,7 @@ import com.bumptech.glide.request.RequestOptions;
 import com.example.ptb.ListAdapter;
 import com.example.ptb.R;
 import com.example.ptb.SharePreferenceManager;
+import com.example.ptb.model.Rating;
 import com.example.ptb.model.Tambalban;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -52,7 +53,7 @@ public class ListFragment extends Fragment {
     private SearchView searchView;
     private TextView tvSearchresult;
     private String valueDB;
-    private String  refinedData;
+    private String refinedData;
     private ProgressBar progressBar;
     private SharePreferenceManager spManager;
     private TextView tvUserName, tvLocation;
@@ -108,22 +109,23 @@ public class ListFragment extends Fragment {
         setHeader(view);
     }
 
-    public void setHeader(View view){
+    public void setHeader(View view) {
         spManager = new SharePreferenceManager(getContext());
         tvUserName = view.findViewById(R.id.tvUserLoginList);
         ivFoto = view.findViewById(R.id.ivFotoProfilList);
         tvLocation = view.findViewById(R.id.tvLocationList);
-        String usernamelogin = spManager.getSPString(SharePreferenceManager.SP_Username,"");
-        String username = usernamelogin!="" ?usernamelogin:"---not yet login---";
+        String usernamelogin = spManager.getSPString(SharePreferenceManager.SP_Username, "");
+        String username = usernamelogin != "" ? usernamelogin : "---not yet login---";
         tvUserName.setText(username);
         RequestOptions requestOptions = new RequestOptions();
         requestOptions.placeholder(R.drawable.logo_tambal_ban).error(R.drawable.logoputih);
         Glide.with(getContext()).load(fotoProfil).apply(requestOptions).into(ivFoto);
-        tvLocation.setText("lat "+spManager.getSPDouble(SharePreferenceManager.SP_Lat,0)+", lng "+spManager.getSPDouble(SharePreferenceManager.SP_Lng,0));
+        tvLocation.setText(spManager.getSPString(SharePreferenceManager.SP_Address,""));
+//        tvLocation.setText("lat " + spManager.getSPDouble(SharePreferenceManager.SP_Lat, 0) + ", lng " + spManager.getSPDouble(SharePreferenceManager.SP_Lng, 0));
 
     }
 
-    public void getData(View view) {
+    public void getData(final View view) {
         searchView = view.findViewById(R.id.svTbList);
         tvSearchresult = view.findViewById(R.id.tvSearchResultList);
         rvList = view.findViewById(R.id.rvListTbList);
@@ -134,34 +136,69 @@ public class ListFragment extends Fragment {
         // [START write_message]
         // Write a message to the database
         mDatabase = FirebaseDatabase.getInstance();
-        myRef = mDatabase.getReference().child("tambalban");
+        myRef = mDatabase.getReference();
 
         // [END write_message]
 
         // [START read_message]
         // Read from the database
         progressBar.setVisibility(View.VISIBLE);
-        myRef.addValueEventListener(new ValueEventListener() {
+        listTb = new ArrayList<>();
+        myRef.child("tambalban").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 if (dataSnapshot.getValue() != null) {
-                    // This method is called once with the initial value and again
-                    // whenever data at this location is updated.
-                    listTb = new ArrayList<>();
-
                     valueDB = dataSnapshot.getValue().toString();
                     refinedData = valueDB.substring(1, valueDB.length() - 1);
                     Log.d(TAG, refinedData);
                     for (DataSnapshot tbdataSnapshot : dataSnapshot.getChildren()) {
-                        Tambalban tambalban = tbdataSnapshot.getValue(Tambalban.class);
+                        final Tambalban tambalban = tbdataSnapshot.getValue(Tambalban.class);
                         tambalban.setKey(tbdataSnapshot.getKey());
+                        myRef.child("ratings").orderByChild("tbID").equalTo(tbdataSnapshot.getKey()).addListenerForSingleValueEvent(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(DataSnapshot dataSnapshot) {
+                                Log.d(TAG, "kesini");
+                                double a = 0;
+                                if (dataSnapshot.getValue() != null) {
+                                    Log.d(TAG + "kerating", dataSnapshot.getValue().toString());
+                                    for (DataSnapshot tbdataSnapshot : dataSnapshot.getChildren()) {
+                                        Rating rating = tbdataSnapshot.getValue(Rating.class);
+                                        a += Double.parseDouble(rating.getRating());
+                                    }
 
+                                    tambalban.setRating(a / dataSnapshot.getChildrenCount());
+                                    Log.d(TAG + "per", a / dataSnapshot.getChildrenCount() + "");
+                                    Log.d("listtb",listTb.indexOf(tambalban)+"");
+                                    int index = listTb.indexOf(tambalban);
+                                    if(index!=-1){
+                                        listTb.remove(tambalban);
+                                    }
+                                    listTb.add(tambalban);
+                                    Log.d(TAG + "0", listTb.get(0).getRating() + "per0");
+                                    for (int i = 0; i < listTb.size(); i++)
+                                        Log.d(TAG + i, listTb.get(i).getRating() + " rating");
+
+                                    Log.d(TAG, listTb.size() + "listtb");
+
+                                } else {
+//                                    Toast.makeText(view.getContext(), "Data not found", Toast.LENGTH_SHORT).show();
+//                                    listTb.add(tambalban);
+                                    Log.d(TAG, "Data not found");
+                                }
+
+                                adapter = new ListAdapter(listTb, getContext());
+                                rvList.setAdapter(adapter);
+                                progressBar.setVisibility(View.GONE);
+                            }
+
+                            @Override
+                            public void onCancelled(DatabaseError databaseError) {
+                                Log.w(TAG, "Failed to read value.", databaseError.toException());
+                            }
+                        });
                         listTb.add(tambalban);
                     }
-                    adapter = new ListAdapter(listTb, getContext());
-                    rvList.setAdapter(adapter);
-                    progressBar.setVisibility(View.GONE);
-                }else{
+                } else {
                     Toast.makeText(getContext(), "Data not found", Toast.LENGTH_SHORT).show();
                 }
             }
@@ -173,16 +210,17 @@ public class ListFragment extends Fragment {
             }
         });
 
+
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
                 int SearchIndex = refinedData.indexOf(query);
-                if(SearchIndex!=-1) {
+                if (SearchIndex != -1) {
                     String SearchResult = refinedData.substring(SearchIndex);
                     String SearchSplit[] = SearchResult.split(",");
                     tvSearchresult.setText("Result : " + SearchSplit[0]);
                     getSearch(true, SearchSplit[0]);
-                }else{
+                } else {
                     tvSearchresult.setText("Result : Data not found");
                     Toast.makeText(getContext(), "Data not found", Toast.LENGTH_SHORT).show();
                     getSearch(false, null);
@@ -193,13 +231,13 @@ public class ListFragment extends Fragment {
             @Override
             public boolean onQueryTextChange(String newText) {
                 int SearchIndex = refinedData.indexOf(newText);
-                if(SearchIndex!=-1) {
+                if (SearchIndex != -1) {
                     String SearchResult = refinedData.substring(SearchIndex);
                     String SearchSplit[] = SearchResult.split(",");
                     Log.d(TAG, SearchSplit.toString());
                     tvSearchresult.setText("Result : " + SearchSplit[0]);
-                    getSearch(true,SearchSplit[0]);
-                }else{
+                    getSearch(true, SearchSplit[0]);
+                } else {
                     tvSearchresult.setText("Result : Data not found");
                     Toast.makeText(getContext(), "Data not found", Toast.LENGTH_SHORT).show();
                     getSearch(false, null);
@@ -210,33 +248,34 @@ public class ListFragment extends Fragment {
         // [END read_message]
     }
 
-    public void getSearch(boolean mustSearch,String a){
-        if(mustSearch){
+    public void getSearch(boolean mustSearch, String a) {
+        if (mustSearch) {
             myRef.orderByChild("nama").startAt(a).endAt("~").addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
                     if (dataSnapshot.getValue() != null) {
-                        Log.d(TAG+"aaaa", dataSnapshot.getValue().toString());
+                        Log.d(TAG + "aaaa", dataSnapshot.getValue().toString());
                         listTb = new ArrayList<>();
-                        for(DataSnapshot tbdataSnapshot : dataSnapshot.getChildren()){
+                        for (DataSnapshot tbdataSnapshot : dataSnapshot.getChildren()) {
                             Tambalban tambalban = tbdataSnapshot.getValue(Tambalban.class);
                             tambalban.setKey(tbdataSnapshot.getKey());
 
                             listTb.add(tambalban);
                         }
-                        Log.d(TAG,listTb.size()+"");
+                        Log.d(TAG, listTb.size() + "");
                         adapter = new ListAdapter(listTb, getContext());
                         rvList.setAdapter(adapter);
                     } else {
                         Toast.makeText(getContext(), "Data not found", Toast.LENGTH_SHORT).show();
                     }
                 }
+
                 @Override
                 public void onCancelled(DatabaseError databaseError) {
                     Log.w(TAG, "Failed to read value.", databaseError.toException());
                 }
             });
-        }else{
+        } else {
             listTb = new ArrayList<>();
             adapter = new ListAdapter(listTb, getContext());
             rvList.setAdapter(adapter);

@@ -108,7 +108,7 @@ public class ProfileFragment extends Fragment {
         tvComentar = view.findViewById(R.id.tvComentarCount);
         tvRating = view.findViewById(R.id.tvCountRating);
         btnLogout = view.findViewById(R.id.btn_logout);
-        progressBar = view.findViewById(R.id.progressBarProfile);
+        progressBar = view.findViewById(R.id.progressBar);
         progressBar.setVisibility(View.VISIBLE);
 
         init();

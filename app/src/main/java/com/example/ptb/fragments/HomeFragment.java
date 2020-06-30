@@ -1,5 +1,6 @@
 package com.example.ptb.fragments;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -9,10 +10,12 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.cardview.widget.CardView;
 import androidx.fragment.app.Fragment;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
+import com.example.ptb.ListActivity;
 import com.example.ptb.R;
 import com.example.ptb.SharePreferenceManager;
 
@@ -30,6 +33,7 @@ public class HomeFragment extends Fragment {
     private TextView tvUserName, tvLocation;
     private ImageView ivFoto;
     private String fotoProfil = "http://shyntadarmawan.000webhostapp.com/assets/user.png";
+    private CardView btn24Jam;
 
     // TODO: Rename and change types of parameters
     private String mParam1;
@@ -87,7 +91,16 @@ public class HomeFragment extends Fragment {
         RequestOptions requestOptions = new RequestOptions();
         requestOptions.placeholder(R.drawable.logo_tambal_ban).error(R.drawable.logoputih);
         Glide.with(getContext()).load(fotoProfil).apply(requestOptions).into(ivFoto);
-        tvLocation.setText("lat "+spManager.getSPDouble(SharePreferenceManager.SP_Lat,0)+", lng "+spManager.getSPDouble(SharePreferenceManager.SP_Lng,0));
+        tvLocation.setText(spManager.getSPString(SharePreferenceManager.SP_Address,""));
+//        tvLocation.setText("lat "+spManager.getSPDouble(SharePreferenceManager.SP_Lat,0)+", lng "+spManager.getSPDouble(SharePreferenceManager.SP_Lng,0));
+        btn24Jam = view.findViewById(R.id.btn24Jam);
+        btn24Jam.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(getContext(), ListActivity.class));
+                getActivity().finish();
+            }
+        });
 
     }
 }

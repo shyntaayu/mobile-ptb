@@ -7,7 +7,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.cardview.widget.CardView;
@@ -15,13 +14,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
-import com.example.ptb.model.Rating;
 import com.example.ptb.model.Tambalban;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 
@@ -31,10 +24,6 @@ public class ListAdapter extends RecyclerView.Adapter<ListAdapter.ViewHolder> {
     private ArrayList<Tambalban> listTb;
     private Context context;
     private SharePreferenceManager spManager;
-    private DatabaseReference myRef;
-    private FirebaseDatabase mDatabase;
-    private ArrayList<Rating> listRating;
-    private ArrayList<Double> listRata;
 
     public ListAdapter(ArrayList<Tambalban> listTb, Context context) {
         this.listTb = listTb;
@@ -55,7 +44,7 @@ public class ListAdapter extends RecyclerView.Adapter<ListAdapter.ViewHolder> {
         holder.tvAlamat.setText(listTb.get(position).getAlamat());
         holder.tvJam.setText(listTb.get(position).getJambuka() + " - " + listTb.get(position).getJamtutup());
         int rating = listTb.get(position).getTubles() ? 4 : 3;
-        holder.tvRating.setText(rating + " Star");
+
         String latS = listTb.get(position).getLatitude().replace(",", "");
         String lngS = listTb.get(position).getLongitude().replace(",", "");
         Log.d("list" + position, latS);
@@ -65,7 +54,8 @@ public class ListAdapter extends RecyclerView.Adapter<ListAdapter.ViewHolder> {
         double jarak = getHarvesine(lat, lng);
         String jarakS = String.format("%.2f", jarak);
         holder.tvJarak.setText("Jarak : " + jarakS + " km");
-        getRating(listTb.get(position).getKey());
+        String ratingS = String.format("%.2f",listTb.get(position).getRating());
+        holder.tvRating.setText( ratingS+ " Star");
         RequestOptions requestOptions = new RequestOptions();
         requestOptions.placeholder(R.drawable.logo_tambal_ban).error(R.drawable.logokuning);
         Glide.with(context).load(listTb.get(position).getFotobengkel()).apply(requestOptions).into(holder.ivFoto);
@@ -106,7 +96,6 @@ public class ListAdapter extends RecyclerView.Adapter<ListAdapter.ViewHolder> {
             tvRating = itemView.findViewById(R.id.tvRating);
             ivFoto = itemView.findViewById(R.id.ivFoto);
             cvItem = itemView.findViewById(R.id.cvItem);
-            listRating = new ArrayList<Rating>();
         }
     }
 
@@ -131,38 +120,5 @@ public class ListAdapter extends RecyclerView.Adapter<ListAdapter.ViewHolder> {
         return value * Math.PI / 180;
     }
 
-    private ArrayList<Rating> getRating(String id) {
-        mDatabase = FirebaseDatabase.getInstance();
-        myRef = mDatabase.getReference();
-        double a = 0;
-        Log.d(TAG, "kesini2");
-        myRef.child("ratings").orderByChild("tbID").equalTo(id).addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                Log.d(TAG, "kesini");
-                listRating = new ArrayList<>();
-                if (dataSnapshot.getValue() != null) {
-                    Log.d(TAG + "aaaa", dataSnapshot.getValue().toString());
-                    for (DataSnapshot tbdataSnapshot : dataSnapshot.getChildren()) {
-                        Rating rating = tbdataSnapshot.getValue(Rating.class);
-                        rating.setKey(tbdataSnapshot.getKey());
-                        listRating.add(rating);
-                    }
-                    Log.d(TAG, listRating.size() + "jml");
 
-
-                    Log.d(TAG, listRata.size() + "rata");
-
-                } else {
-                    Toast.makeText(context, "Data not found", Toast.LENGTH_SHORT).show();
-                }
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-                Log.w(TAG, "Failed to read value.", databaseError.toException());
-            }
-        });
-        return listRating;
-    }
 }
