@@ -55,35 +55,178 @@ public class ListActivity extends AppCompatActivity {
         basicReadWrite();
     }
 
-    public void getSearch(boolean mustSearch, String a) {
-        if (mustSearch) {
-            myRef.child("tambalban").orderByChild("nama").startAt(a).endAt("~").addListenerForSingleValueEvent(new ValueEventListener() {
+    public void getSearchFullTime(boolean mustSearch, final String searchValue) {
+        if (mustSearch && searchValue!=null) {
+            listTb = new ArrayList<>();
+            myRef.child("tambalban").orderByChild("fulltime").equalTo(true).addValueEventListener(new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
                     if (dataSnapshot.getValue() != null) {
-                        Log.d(TAG + "aaaa", dataSnapshot.getValue().toString());
-                        listTb = new ArrayList<>();
+                        valueDB = dataSnapshot.getValue().toString();
+                        refinedData = valueDB.substring(1, valueDB.length() - 1);
+                        Log.d(TAG + "refined", refinedData);
                         for (DataSnapshot tbdataSnapshot : dataSnapshot.getChildren()) {
-                            Tambalban tambalban = tbdataSnapshot.getValue(Tambalban.class);
+                            final Tambalban tambalban = tbdataSnapshot.getValue(Tambalban.class);
                             tambalban.setKey(tbdataSnapshot.getKey());
+                            myRef.child("ratings").orderByChild("tbID").equalTo(tbdataSnapshot.getKey()).addListenerForSingleValueEvent(new ValueEventListener() {
+                                @Override
+                                public void onDataChange(DataSnapshot dataSnapshot) {
+                                    Log.d(TAG, "kesini");
+                                    double a = 0;
+                                    if (dataSnapshot.getValue() != null) {
+                                        Log.d(TAG + "kerating", dataSnapshot.getValue().toString());
+                                        for (DataSnapshot tbdataSnapshot : dataSnapshot.getChildren()) {
+                                            Rating rating = tbdataSnapshot.getValue(Rating.class);
+                                            a += Double.parseDouble(rating.getRating());
+                                        }
 
-                            listTb.add(tambalban);
+                                        tambalban.setRating(a / dataSnapshot.getChildrenCount());
+                                        Log.d(TAG + "per", a / dataSnapshot.getChildrenCount() + "");
+                                        Log.d("listtb", listTb.indexOf(tambalban) + "");
+                                        int index = listTb.indexOf(tambalban);
+                                        if (index != -1) {
+                                            listTb.remove(tambalban);
+                                        }
+                                        String latS = tambalban.getLatitude().replace(",", "");
+                                        String lngS = tambalban.getLongitude().replace(",", "");
+                                        Log.d("list", latS);
+                                        Log.d("list", lngS);
+                                        double lat = Double.parseDouble(latS);
+                                        double lng = Double.parseDouble(lngS);
+                                        double jarak = getHarvesine(lat, lng);
+                                        String jarakS = String.format("%.2f", jarak);
+                                        tambalban.setJarak(jarakS);
+                                        if (tambalban.getNama().contains(searchValue)) {
+                                            listTb.add(tambalban);
+                                        }
+                                    } else {
+                                        Log.d(TAG, "Data not found");
+                                    }
+
+                                    adapter = new ListAdapter(listTb, ListActivity.this);
+                                    rvList.setAdapter(adapter);
+                                    progressBar.setVisibility(View.GONE);
+                                }
+
+                                @Override
+                                public void onCancelled(DatabaseError databaseError) {
+                                    Log.w(TAG, "Failed to read value.", databaseError.toException());
+                                }
+                            });
+                            String latS = tambalban.getLatitude().replace(",", "");
+                            String lngS = tambalban.getLongitude().replace(",", "");
+                            Log.d("list", latS);
+                            Log.d("list", lngS);
+                            double lat = Double.parseDouble(latS);
+                            double lng = Double.parseDouble(lngS);
+                            double jarak = getHarvesine(lat, lng);
+                            String jarakS = String.format("%.2f", jarak);
+                            tambalban.setJarak(jarakS);
+                            if (tambalban.getNama().contains(searchValue)) {
+                                listTb.add(tambalban);
+                            }
                         }
-                        Log.d(TAG, listTb.size() + "");
-                        adapter = new ListAdapter(listTb, ListActivity.this);
-                        rvList.setAdapter(adapter);
                     } else {
-                        Toast.makeText(ListActivity.this, "Data not found", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(ListActivity.this, "Data not found", Toast.LENGTH_LONG).show();
                     }
                 }
 
                 @Override
-                public void onCancelled(DatabaseError databaseError) {
-                    Log.w(TAG, "Failed to read value.", databaseError.toException());
+                public void onCancelled(DatabaseError error) {
+                    // Failed to read value
+                    Log.w(TAG, "Failed to read value.", error.toException());
                 }
             });
         } else {
+            adapter = new ListAdapter(listTb, ListActivity.this);
+            rvList.setAdapter(adapter);
+        }
+
+    }
+
+    public void getSearchTerdekat(boolean mustSearch, final String searchValue) {
+        if (mustSearch&& searchValue!=null) {
             listTb = new ArrayList<>();
+            myRef.child("tambalban").addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    if (dataSnapshot.getValue() != null) {
+                        valueDB = dataSnapshot.getValue().toString();
+                        refinedData = valueDB.substring(1, valueDB.length() - 1);
+                        Log.d(TAG + "refined", refinedData);
+                        for (DataSnapshot tbdataSnapshot : dataSnapshot.getChildren()) {
+                            final Tambalban tambalban = tbdataSnapshot.getValue(Tambalban.class);
+                            tambalban.setKey(tbdataSnapshot.getKey());
+                            myRef.child("ratings").orderByChild("tbID").equalTo(tbdataSnapshot.getKey()).addListenerForSingleValueEvent(new ValueEventListener() {
+                                @Override
+                                public void onDataChange(DataSnapshot dataSnapshot) {
+                                    Log.d(TAG, "kesini");
+                                    double a = 0;
+                                    if (dataSnapshot.getValue() != null) {
+                                        Log.d(TAG + "kerating", dataSnapshot.getValue().toString());
+                                        for (DataSnapshot tbdataSnapshot : dataSnapshot.getChildren()) {
+                                            Rating rating = tbdataSnapshot.getValue(Rating.class);
+                                            a += Double.parseDouble(rating.getRating());
+                                        }
+
+                                        tambalban.setRating(a / dataSnapshot.getChildrenCount());
+                                        Log.d(TAG + "per", a / dataSnapshot.getChildrenCount() + "");
+                                        Log.d("listtb", listTb.indexOf(tambalban) + "");
+                                        int index = listTb.indexOf(tambalban);
+                                        if (index != -1) {
+                                            listTb.remove(tambalban);
+                                        }
+                                        String latS = tambalban.getLatitude().replace(",", "");
+                                        String lngS = tambalban.getLongitude().replace(",", "");
+                                        Log.d("list", latS);
+                                        Log.d("list", lngS);
+                                        double lat = Double.parseDouble(latS);
+                                        double lng = Double.parseDouble(lngS);
+                                        double jarak = getHarvesine(lat, lng);
+                                        String jarakS = String.format("%.2f", jarak);
+                                        tambalban.setJarak(jarakS);
+                                        if (tambalban.getNama().contains(searchValue) && jarak < 2) {
+                                            listTb.add(tambalban);
+                                        }
+                                    } else {
+                                        Log.d(TAG, "Data not found");
+                                    }
+
+                                    adapter = new ListAdapter(listTb, ListActivity.this);
+                                    rvList.setAdapter(adapter);
+                                    progressBar.setVisibility(View.GONE);
+                                }
+
+                                @Override
+                                public void onCancelled(DatabaseError databaseError) {
+                                    Log.w(TAG, "Failed to read value.", databaseError.toException());
+                                }
+                            });
+                            String latS = tambalban.getLatitude().replace(",", "");
+                            String lngS = tambalban.getLongitude().replace(",", "");
+                            Log.d("list", latS);
+                            Log.d("list", lngS);
+                            double lat = Double.parseDouble(latS);
+                            double lng = Double.parseDouble(lngS);
+                            double jarak = getHarvesine(lat, lng);
+                            String jarakS = String.format("%.2f", jarak);
+                            tambalban.setJarak(jarakS);
+                            if (tambalban.getNama().contains(searchValue) && jarak < 2) {
+                                listTb.add(tambalban);
+                            }
+                        }
+                    } else {
+                        Toast.makeText(ListActivity.this, "Data not found", Toast.LENGTH_LONG).show();
+                    }
+                }
+
+                @Override
+                public void onCancelled(DatabaseError error) {
+                    // Failed to read value
+                    Log.w(TAG, "Failed to read value.", error.toException());
+                }
+            });
+        } else {
             adapter = new ListAdapter(listTb, ListActivity.this);
             rvList.setAdapter(adapter);
         }
@@ -121,7 +264,7 @@ public class ListActivity extends AppCompatActivity {
         RequestOptions requestOptions = new RequestOptions();
         requestOptions.placeholder(R.drawable.logo_tambal_ban).error(R.drawable.logoputih);
         Glide.with(this).load(fotoProfil).apply(requestOptions).into(ivFoto);
-        tvTitleList.setText(is24jam?" 24 Jam":" Terdekat");
+        tvTitleList.setText(is24jam ? " 24 Jam" : " Terdekat");
         tvLocation.setText(spManager.getSPString(SharePreferenceManager.SP_Address, ""));
 //        tvLocation.setText("lat " + spManager.getSPDouble(SharePreferenceManager.SP_Lat, 0) + ", lng " + spManager.getSPDouble(SharePreferenceManager.SP_Lng, 0));
 
@@ -146,7 +289,7 @@ public class ListActivity extends AppCompatActivity {
                     if (dataSnapshot.getValue() != null) {
                         valueDB = dataSnapshot.getValue().toString();
                         refinedData = valueDB.substring(1, valueDB.length() - 1);
-                        Log.d(TAG, refinedData);
+                        Log.d(TAG + "refined", refinedData);
                         for (DataSnapshot tbdataSnapshot : dataSnapshot.getChildren()) {
                             final Tambalban tambalban = tbdataSnapshot.getValue(Tambalban.class);
                             tambalban.setKey(tbdataSnapshot.getKey());
@@ -301,33 +444,54 @@ public class ListActivity extends AppCompatActivity {
             @Override
             public boolean onQueryTextSubmit(String query) {
                 int SearchIndex = refinedData.indexOf(query);
+                Log.d(TAG + "refined", SearchIndex + "");
                 if (SearchIndex != -1) {
                     String SearchResult = refinedData.substring(SearchIndex);
+                    Log.d(TAG + "refined", SearchResult + "");
                     String SearchSplit[] = SearchResult.split(",");
+                    Log.d(TAG + "refined", SearchSplit + "");
                     tvSearchresult.setText("Result : " + SearchSplit[0]);
-                    getSearch(true, SearchSplit[0]);
+                    if (is24jam) {
+                        getSearchFullTime(true, SearchSplit[0]);
+                    } else {
+                        getSearchTerdekat(true, SearchSplit[0]);
+                    }
                 } else {
                     tvSearchresult.setText("Result : Data not found");
                     Toast.makeText(ListActivity.this, "Data not found", Toast.LENGTH_SHORT).show();
-                    getSearch(false, null);
+                    if (is24jam) {
+                        getSearchFullTime(false, null);
+                    } else {
+                        getSearchTerdekat(false, null);
+                    }
                 }
                 return false;
             }
 
             @Override
             public boolean onQueryTextChange(String newText) {
-                int SearchIndex = refinedData.indexOf(newText);
-                if (SearchIndex != -1) {
-                    String SearchResult = refinedData.substring(SearchIndex);
-                    String SearchSplit[] = SearchResult.split(",");
-                    Log.d(TAG, SearchSplit.toString());
-                    tvSearchresult.setText("Result : " + SearchSplit[0]);
-                    getSearch(true, SearchSplit[0]);
-                } else {
-                    tvSearchresult.setText("Result : Data not found");
-                    Toast.makeText(ListActivity.this, "Data not found", Toast.LENGTH_SHORT).show();
-                    getSearch(false, null);
-                }
+//                int SearchIndex = refinedData.indexOf(newText);
+//                Log.d(TAG + "refined1", SearchIndex + "");
+//                if (SearchIndex != -1) {
+//                    String SearchResult = refinedData.substring(SearchIndex);
+//                    Log.d(TAG + "refined2", SearchResult + "");
+//                    String SearchSplit[] = SearchResult.split(",");
+//                    Log.d(TAG + "refined3", SearchSplit + "");
+//                    tvSearchresult.setText("Result : " + SearchSplit[0]);
+//                    if (is24jam) {
+//                        getSearchFullTime(true, SearchSplit[0]);
+//                    } else {
+//                        getSearchTerdekat(true, SearchSplit[0]);
+//                    }
+//                } else {
+//                    tvSearchresult.setText("Result : Data not found");
+//                    Toast.makeText(ListActivity.this, "Data not found", Toast.LENGTH_SHORT).show();
+//                    if (is24jam) {
+//                        getSearchFullTime(false, null);
+//                    } else {
+//                        getSearchTerdekat(false, null);
+//                    }
+//                }
                 return false;
             }
         });
