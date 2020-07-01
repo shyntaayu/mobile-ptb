@@ -38,14 +38,15 @@ public class ListActivity extends AppCompatActivity {
     RecyclerView.LayoutManager layoutManager;
     private ArrayList<Tambalban> listTb;
     private SearchView searchView;
-    private TextView tvSearchresult, tvUserName, tvLocation;
+    private TextView tvSearchresult, tvUserName, tvLocation, tvTitleList;
     private ImageView ivFoto;
     private String valueDB;
-    private String  refinedData;
+    private String refinedData;
     private ProgressBar progressBar;
     private SharePreferenceManager spManager;
     private String fotoProfil = "http://shyntadarmawan.000webhostapp.com/assets/user.png";
     private ConstraintLayout constraintLayout;
+    private boolean is24jam;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,7 +57,7 @@ public class ListActivity extends AppCompatActivity {
 
     public void getSearch(boolean mustSearch, String a) {
         if (mustSearch) {
-            myRef.orderByChild("nama").startAt(a).endAt("~").addListenerForSingleValueEvent(new ValueEventListener() {
+            myRef.child("tambalban").orderByChild("nama").startAt(a).endAt("~").addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
                     if (dataSnapshot.getValue() != null) {
@@ -89,17 +90,21 @@ public class ListActivity extends AppCompatActivity {
 
     }
 
-    public static Intent getActIntent(Activity activity){
+    public static Intent getActIntent(Activity activity) {
         return new Intent(activity, ListActivity.class);
     }
 
     public void basicReadWrite() {
+        Bundle b = getIntent().getExtras();
+        if (b != null)
+            is24jam = b.getInt("key") == 1 ? true : false;
         constraintLayout = findViewById(R.id.constraintBack);
         searchView = findViewById(R.id.svTb);
         tvSearchresult = findViewById(R.id.tvSearchResult);
         rvList = findViewById(R.id.rvListTb);
         tvLocation = findViewById(R.id.tvJarak);
         tvUserName = findViewById(R.id.tvUserName);
+        tvTitleList = findViewById(R.id.tvTitleList);
         ivFoto = findViewById(R.id.ivFotoProfilList);
         rvList.setHasFixedSize(true);
         layoutManager = new LinearLayoutManager(this);
@@ -116,13 +121,15 @@ public class ListActivity extends AppCompatActivity {
         RequestOptions requestOptions = new RequestOptions();
         requestOptions.placeholder(R.drawable.logo_tambal_ban).error(R.drawable.logoputih);
         Glide.with(this).load(fotoProfil).apply(requestOptions).into(ivFoto);
-        tvLocation.setText(spManager.getSPString(SharePreferenceManager.SP_Address,""));
+        tvTitleList.setText(is24jam?" 24 Jam":" Terdekat");
+        tvLocation.setText(spManager.getSPString(SharePreferenceManager.SP_Address, ""));
 //        tvLocation.setText("lat " + spManager.getSPDouble(SharePreferenceManager.SP_Lat, 0) + ", lng " + spManager.getSPDouble(SharePreferenceManager.SP_Lng, 0));
 
         constraintLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(ListActivity.this, MainActivity.class));
+//                startActivity(new Intent(ListActivity.this, MainActivity.class));
+                onBackPressed();
                 finish();
             }
         });
@@ -132,72 +139,163 @@ public class ListActivity extends AppCompatActivity {
         // Read from the database
         progressBar.setVisibility(View.VISIBLE);
         listTb = new ArrayList<>();
-        myRef.child("tambalban").orderByChild("fulltime").equalTo(true).addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                if (dataSnapshot.getValue() != null) {
-                    valueDB = dataSnapshot.getValue().toString();
-                    refinedData = valueDB.substring(1, valueDB.length() - 1);
-                    Log.d(TAG, refinedData);
-                    for (DataSnapshot tbdataSnapshot : dataSnapshot.getChildren()) {
-                        final Tambalban tambalban = tbdataSnapshot.getValue(Tambalban.class);
-                        tambalban.setKey(tbdataSnapshot.getKey());
-                        myRef.child("ratings").orderByChild("tbID").equalTo(tbdataSnapshot.getKey()).addListenerForSingleValueEvent(new ValueEventListener() {
-                            @Override
-                            public void onDataChange(DataSnapshot dataSnapshot) {
-                                Log.d(TAG, "kesini");
-                                double a = 0;
-                                if (dataSnapshot.getValue() != null) {
-                                    Log.d(TAG + "kerating", dataSnapshot.getValue().toString());
-                                    for (DataSnapshot tbdataSnapshot : dataSnapshot.getChildren()) {
-                                        Rating rating = tbdataSnapshot.getValue(Rating.class);
-                                        a += Double.parseDouble(rating.getRating());
+        if (is24jam) {
+            myRef.child("tambalban").orderByChild("fulltime").equalTo(true).addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    if (dataSnapshot.getValue() != null) {
+                        valueDB = dataSnapshot.getValue().toString();
+                        refinedData = valueDB.substring(1, valueDB.length() - 1);
+                        Log.d(TAG, refinedData);
+                        for (DataSnapshot tbdataSnapshot : dataSnapshot.getChildren()) {
+                            final Tambalban tambalban = tbdataSnapshot.getValue(Tambalban.class);
+                            tambalban.setKey(tbdataSnapshot.getKey());
+                            myRef.child("ratings").orderByChild("tbID").equalTo(tbdataSnapshot.getKey()).addListenerForSingleValueEvent(new ValueEventListener() {
+                                @Override
+                                public void onDataChange(DataSnapshot dataSnapshot) {
+                                    Log.d(TAG, "kesini");
+                                    double a = 0;
+                                    if (dataSnapshot.getValue() != null) {
+                                        Log.d(TAG + "kerating", dataSnapshot.getValue().toString());
+                                        for (DataSnapshot tbdataSnapshot : dataSnapshot.getChildren()) {
+                                            Rating rating = tbdataSnapshot.getValue(Rating.class);
+                                            a += Double.parseDouble(rating.getRating());
+                                        }
+
+                                        tambalban.setRating(a / dataSnapshot.getChildrenCount());
+                                        Log.d(TAG + "per", a / dataSnapshot.getChildrenCount() + "");
+                                        Log.d("listtb", listTb.indexOf(tambalban) + "");
+                                        int index = listTb.indexOf(tambalban);
+                                        if (index != -1) {
+                                            listTb.remove(tambalban);
+                                        }
+                                        String latS = tambalban.getLatitude().replace(",", "");
+                                        String lngS = tambalban.getLongitude().replace(",", "");
+                                        Log.d("list", latS);
+                                        Log.d("list", lngS);
+                                        double lat = Double.parseDouble(latS);
+                                        double lng = Double.parseDouble(lngS);
+                                        double jarak = getHarvesine(lat, lng);
+                                        String jarakS = String.format("%.2f", jarak);
+                                        tambalban.setJarak(jarakS);
+                                        listTb.add(tambalban);
+                                    } else {
+                                        Log.d(TAG, "Data not found");
                                     }
 
-                                    tambalban.setRating(a / dataSnapshot.getChildrenCount());
-                                    Log.d(TAG + "per", a / dataSnapshot.getChildrenCount() + "");
-                                    Log.d("listtb",listTb.indexOf(tambalban)+"");
-                                    int index = listTb.indexOf(tambalban);
-                                    if(index!=-1){
-                                        listTb.remove(tambalban);
-                                    }
-                                    listTb.add(tambalban);
-                                    Log.d(TAG + "0", listTb.get(0).getRating() + "per0");
-                                    for (int i = 0; i < listTb.size(); i++)
-                                        Log.d(TAG + i, listTb.get(i).getRating() + " rating");
-
-                                    Log.d(TAG, listTb.size() + "listtb");
-
-                                } else {
-//                                    Toast.makeText(view.getContext(), "Data not found", Toast.LENGTH_SHORT).show();
-//                                    listTb.add(tambalban);
-                                    Log.d(TAG, "Data not found");
+                                    adapter = new ListAdapter(listTb, ListActivity.this);
+                                    rvList.setAdapter(adapter);
+                                    progressBar.setVisibility(View.GONE);
                                 }
 
-                                adapter = new ListAdapter(listTb, ListActivity.this);
-                                rvList.setAdapter(adapter);
-                                progressBar.setVisibility(View.GONE);
-                            }
-
-                            @Override
-                            public void onCancelled(DatabaseError databaseError) {
-                                Log.w(TAG, "Failed to read value.", databaseError.toException());
-                            }
-                        });
-                        Log.d("24jam", tambalban.getNama());
-                        listTb.add(tambalban);
+                                @Override
+                                public void onCancelled(DatabaseError databaseError) {
+                                    Log.w(TAG, "Failed to read value.", databaseError.toException());
+                                }
+                            });
+                            String latS = tambalban.getLatitude().replace(",", "");
+                            String lngS = tambalban.getLongitude().replace(",", "");
+                            Log.d("list", latS);
+                            Log.d("list", lngS);
+                            double lat = Double.parseDouble(latS);
+                            double lng = Double.parseDouble(lngS);
+                            double jarak = getHarvesine(lat, lng);
+                            String jarakS = String.format("%.2f", jarak);
+                            tambalban.setJarak(jarakS);
+                            listTb.add(tambalban);
+                        }
+                    } else {
+                        Toast.makeText(ListActivity.this, "Data not found", Toast.LENGTH_SHORT).show();
                     }
-                } else {
-                    Toast.makeText(ListActivity.this, "Data not found", Toast.LENGTH_SHORT).show();
                 }
-            }
 
-            @Override
-            public void onCancelled(DatabaseError error) {
-                // Failed to read value
-                Log.w(TAG, "Failed to read value.", error.toException());
-            }
-        });
+                @Override
+                public void onCancelled(DatabaseError error) {
+                    // Failed to read value
+                    Log.w(TAG, "Failed to read value.", error.toException());
+                }
+            });
+        } else {
+            myRef.child("tambalban").addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    if (dataSnapshot.getValue() != null) {
+                        valueDB = dataSnapshot.getValue().toString();
+                        refinedData = valueDB.substring(1, valueDB.length() - 1);
+                        Log.d(TAG, refinedData);
+                        for (DataSnapshot tbdataSnapshot : dataSnapshot.getChildren()) {
+                            final Tambalban tambalban = tbdataSnapshot.getValue(Tambalban.class);
+                            tambalban.setKey(tbdataSnapshot.getKey());
+                            myRef.child("ratings").orderByChild("tbID").equalTo(tbdataSnapshot.getKey()).addListenerForSingleValueEvent(new ValueEventListener() {
+                                @Override
+                                public void onDataChange(DataSnapshot dataSnapshot) {
+                                    Log.d(TAG, "kesini");
+                                    double a = 0;
+                                    if (dataSnapshot.getValue() != null) {
+                                        Log.d(TAG + "kerating", dataSnapshot.getValue().toString());
+                                        for (DataSnapshot tbdataSnapshot : dataSnapshot.getChildren()) {
+                                            Rating rating = tbdataSnapshot.getValue(Rating.class);
+                                            a += Double.parseDouble(rating.getRating());
+                                        }
+
+                                        tambalban.setRating(a / dataSnapshot.getChildrenCount());
+                                        Log.d(TAG + "per", a / dataSnapshot.getChildrenCount() + "");
+                                        Log.d("listtb", listTb.indexOf(tambalban) + "");
+                                        int index = listTb.indexOf(tambalban);
+                                        if (index != -1) {
+                                            listTb.remove(tambalban);
+                                        }
+                                        String latS = tambalban.getLatitude().replace(",", "");
+                                        String lngS = tambalban.getLongitude().replace(",", "");
+                                        Log.d("list", latS);
+                                        Log.d("list", lngS);
+                                        double lat = Double.parseDouble(latS);
+                                        double lng = Double.parseDouble(lngS);
+                                        double jarak = getHarvesine(lat, lng);
+                                        String jarakS = String.format("%.2f", jarak);
+                                        tambalban.setJarak(jarakS);
+                                        if (jarak < 2) {
+                                            listTb.add(tambalban);
+                                        }
+                                    } else {
+                                        Log.d(TAG, "Data not found");
+                                    }
+
+                                    adapter = new ListAdapter(listTb, ListActivity.this);
+                                    rvList.setAdapter(adapter);
+                                    progressBar.setVisibility(View.GONE);
+                                }
+
+                                @Override
+                                public void onCancelled(DatabaseError databaseError) {
+                                    Log.w(TAG, "Failed to read value.", databaseError.toException());
+                                }
+                            });
+                            String latS = tambalban.getLatitude().replace(",", "");
+                            String lngS = tambalban.getLongitude().replace(",", "");
+                            Log.d("list", latS);
+                            Log.d("list", lngS);
+                            double lat = Double.parseDouble(latS);
+                            double lng = Double.parseDouble(lngS);
+                            double jarak = getHarvesine(lat, lng);
+                            String jarakS = String.format("%.2f", jarak);
+                            tambalban.setJarak(jarakS);
+                            if (jarak < 2) {
+                                listTb.add(tambalban);
+                            }
+                        }
+                    } else {
+                        Toast.makeText(ListActivity.this, "Data not found", Toast.LENGTH_SHORT).show();
+                    }
+                }
+
+                @Override
+                public void onCancelled(DatabaseError error) {
+                    // Failed to read value
+                    Log.w(TAG, "Failed to read value.", error.toException());
+                }
+            });
+        }
 
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
@@ -234,5 +332,25 @@ public class ListActivity extends AppCompatActivity {
             }
         });
         // [END read_message]
+    }
+
+    public double getHarvesine(double lat, double lng) {
+        final int R = 6371; // Radious of the earth
+        double lat1 = spManager.getSPDouble(SharePreferenceManager.SP_Lat, 0);
+        double lon1 = spManager.getSPDouble(SharePreferenceManager.SP_Lng, 0);
+        double lat2 = lat;
+        double lon2 = lng;
+        double latDistance = toRad(lat2 - lat1);
+        double lonDistance = toRad(lon2 - lon1);
+        double a = Math.sin(latDistance / 2) * Math.sin(latDistance / 2) +
+                Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) *
+                        Math.sin(lonDistance / 2) * Math.sin(lonDistance / 2);
+        double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+        double distance = R * c;
+        return distance;
+    }
+
+    public static double toRad(double value) {
+        return value * Math.PI / 180;
     }
 }

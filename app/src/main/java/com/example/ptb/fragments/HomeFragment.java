@@ -33,7 +33,7 @@ public class HomeFragment extends Fragment {
     private TextView tvUserName, tvLocation;
     private ImageView ivFoto;
     private String fotoProfil = "http://shyntadarmawan.000webhostapp.com/assets/user.png";
-    private CardView btn24Jam;
+    private CardView btn24Jam, btnTerdekat;
 
     // TODO: Rename and change types of parameters
     private String mParam1;
@@ -97,8 +97,24 @@ public class HomeFragment extends Fragment {
         btn24Jam.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(getContext(), ListActivity.class));
-                getActivity().finish();
+                Intent intent = new Intent(getContext(), ListActivity.class);
+                Bundle b = new Bundle();
+                b.putInt("key", 1); //Your id
+                intent.putExtras(b);
+                startActivity(intent);
+//                startActivity(new Intent(getContext(), ListActivity.class));
+//                getActivity().finish();
+            }
+        });
+        btnTerdekat = view.findViewById(R.id.btnTerdekat);
+        btnTerdekat.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getContext(), ListActivity.class);
+                Bundle b = new Bundle();
+                b.putInt("key", 0); //Your id
+                intent.putExtras(b);
+                startActivity(intent);
             }
         });
 

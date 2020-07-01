@@ -120,7 +120,7 @@ public class ListFragment extends Fragment {
         RequestOptions requestOptions = new RequestOptions();
         requestOptions.placeholder(R.drawable.logo_tambal_ban).error(R.drawable.logoputih);
         Glide.with(getContext()).load(fotoProfil).apply(requestOptions).into(ivFoto);
-        tvLocation.setText(spManager.getSPString(SharePreferenceManager.SP_Address,""));
+        tvLocation.setText(spManager.getSPString(SharePreferenceManager.SP_Address, ""));
 //        tvLocation.setText("lat " + spManager.getSPDouble(SharePreferenceManager.SP_Lat, 0) + ", lng " + spManager.getSPDouble(SharePreferenceManager.SP_Lng, 0));
 
     }
@@ -168,21 +168,23 @@ public class ListFragment extends Fragment {
 
                                     tambalban.setRating(a / dataSnapshot.getChildrenCount());
                                     Log.d(TAG + "per", a / dataSnapshot.getChildrenCount() + "");
-                                    Log.d("listtb",listTb.indexOf(tambalban)+"");
+                                    Log.d("listtb", listTb.indexOf(tambalban) + "");
                                     int index = listTb.indexOf(tambalban);
-                                    if(index!=-1){
+                                    if (index != -1) {
                                         listTb.remove(tambalban);
                                     }
+                                    String latS = tambalban.getLatitude().replace(",", "");
+                                    String lngS = tambalban.getLongitude().replace(",", "");
+                                    Log.d("list", latS);
+                                    Log.d("list", lngS);
+                                    double lat = Double.parseDouble(latS);
+                                    double lng = Double.parseDouble(lngS);
+                                    double jarak = getHarvesine(lat, lng);
+                                    String jarakS = String.format("%.2f", jarak);
+                                    tambalban.setJarak(jarakS);
                                     listTb.add(tambalban);
-                                    Log.d(TAG + "0", listTb.get(0).getRating() + "per0");
-                                    for (int i = 0; i < listTb.size(); i++)
-                                        Log.d(TAG + i, listTb.get(i).getRating() + " rating");
-
-                                    Log.d(TAG, listTb.size() + "listtb");
 
                                 } else {
-//                                    Toast.makeText(view.getContext(), "Data not found", Toast.LENGTH_SHORT).show();
-//                                    listTb.add(tambalban);
                                     Log.d(TAG, "Data not found");
                                 }
 
@@ -196,6 +198,15 @@ public class ListFragment extends Fragment {
                                 Log.w(TAG, "Failed to read value.", databaseError.toException());
                             }
                         });
+                        String latS = tambalban.getLatitude().replace(",", "");
+                        String lngS = tambalban.getLongitude().replace(",", "");
+                        Log.d("list", latS);
+                        Log.d("list", lngS);
+                        double lat = Double.parseDouble(latS);
+                        double lng = Double.parseDouble(lngS);
+                        double jarak = getHarvesine(lat, lng);
+                        String jarakS = String.format("%.2f", jarak);
+                        tambalban.setJarak(jarakS);
                         listTb.add(tambalban);
                     }
                 } else {
@@ -281,5 +292,25 @@ public class ListFragment extends Fragment {
             rvList.setAdapter(adapter);
         }
 
+    }
+
+    public double getHarvesine(double lat, double lng) {
+        final int R = 6371; // Radious of the earth
+        double lat1 = spManager.getSPDouble(SharePreferenceManager.SP_Lat, 0);
+        double lon1 = spManager.getSPDouble(SharePreferenceManager.SP_Lng, 0);
+        double lat2 = lat;
+        double lon2 = lng;
+        double latDistance = toRad(lat2 - lat1);
+        double lonDistance = toRad(lon2 - lon1);
+        double a = Math.sin(latDistance / 2) * Math.sin(latDistance / 2) +
+                Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) *
+                        Math.sin(lonDistance / 2) * Math.sin(lonDistance / 2);
+        double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+        double distance = R * c;
+        return distance;
+    }
+
+    public static double toRad(double value) {
+        return value * Math.PI / 180;
     }
 }

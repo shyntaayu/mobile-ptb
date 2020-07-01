@@ -45,15 +45,8 @@ public class ListAdapter extends RecyclerView.Adapter<ListAdapter.ViewHolder> {
         holder.tvJam.setText(listTb.get(position).getJambuka() + " - " + listTb.get(position).getJamtutup());
         int rating = listTb.get(position).getTubles() ? 4 : 3;
 
-        String latS = listTb.get(position).getLatitude().replace(",", "");
-        String lngS = listTb.get(position).getLongitude().replace(",", "");
-        Log.d("list" + position, latS);
-        Log.d("list" + position, lngS);
-        double lat = Double.parseDouble(latS);
-        double lng = Double.parseDouble(lngS);
-        double jarak = getHarvesine(lat, lng);
-        String jarakS = String.format("%.2f", jarak);
-        holder.tvJarak.setText("Jarak : " + jarakS + " km");
+
+        holder.tvJarak.setText("Jarak : " + listTb.get(position).getJarak() + " km");
         String ratingS = String.format("%.2f",listTb.get(position).getRating());
         holder.tvRating.setText( ratingS+ " Star");
         RequestOptions requestOptions = new RequestOptions();
@@ -98,27 +91,4 @@ public class ListAdapter extends RecyclerView.Adapter<ListAdapter.ViewHolder> {
             cvItem = itemView.findViewById(R.id.cvItem);
         }
     }
-
-    public double getHarvesine(double lat, double lng) {
-        final int R = 6371; // Radious of the earth
-        spManager = new SharePreferenceManager(context);
-        double lat1 = spManager.getSPDouble(SharePreferenceManager.SP_Lat, 0);
-        double lon1 = spManager.getSPDouble(SharePreferenceManager.SP_Lng, 0);
-        double lat2 = lat;
-        double lon2 = lng;
-        double latDistance = toRad(lat2 - lat1);
-        double lonDistance = toRad(lon2 - lon1);
-        double a = Math.sin(latDistance / 2) * Math.sin(latDistance / 2) +
-                Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) *
-                        Math.sin(lonDistance / 2) * Math.sin(lonDistance / 2);
-        double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-        double distance = R * c;
-        return distance;
-    }
-
-    private static double toRad(double value) {
-        return value * Math.PI / 180;
-    }
-
-
 }

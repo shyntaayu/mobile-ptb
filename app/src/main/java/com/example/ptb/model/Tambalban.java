@@ -52,6 +52,16 @@ public class Tambalban {
 
     private double rating;
 
+    public String getJarak() {
+        return jarak;
+    }
+
+    public void setJarak(String jarak) {
+        this.jarak = jarak;
+    }
+
+    private String jarak;
+
     public Tambalban(){}
 
     public Tambalban(String alamat, Long createdtime, String fotobengkel, Boolean fulltime, String jambuka, String jamtutup, String latitude, String longitude, String nama, Boolean status, Boolean tubles) {
