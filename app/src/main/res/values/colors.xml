@@ -14,5 +14,10 @@
     <color name="colorBiruBawah">#698EFF</color>
     <color name="colorWhite">#FFFFFF</color>
 
+    <color name="duskYellow">#ffc922</color>
+    <color name="lightGrey">#D3D3D3</color>
+    <color name="grey">#EDEDED</color>
+    <color name="darkGrey">#A5A3A3</color>
+
 
 </resources>
