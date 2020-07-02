@@ -1,6 +1,7 @@
 package com.example.ptb;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,8 +20,10 @@ import java.util.ArrayList;
 
 public class ListAdapter extends RecyclerView.Adapter<ListAdapter.ViewHolder> {
 
+    private static final String TAG = "ListAdapter";
     private ArrayList<Tambalban> listTb;
     private Context context;
+    private SharePreferenceManager spManager;
 
     public ListAdapter(ArrayList<Tambalban> listTb, Context context) {
         this.listTb = listTb;
@@ -37,13 +40,19 @@ public class ListAdapter extends RecyclerView.Adapter<ListAdapter.ViewHolder> {
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-holder.tvNama.setText(listTb.get(position).getNama());
+        holder.tvNama.setText(listTb.get(position).getNama());
         holder.tvAlamat.setText(listTb.get(position).getAlamat());
-        holder.tvJam.setText(listTb.get(position).getJambuka()+" - "+listTb.get(position).getJamtutup());
-        holder.tvRating.setText(listTb.get(position).getTubles().toString());
+        holder.tvJam.setText(listTb.get(position).getJambuka() + " - " + listTb.get(position).getJamtutup());
+        int rating = listTb.get(position).getTubles() ? 4 : 3;
+
+
+        holder.tvJarak.setText("Jarak : " + listTb.get(position).getJarak() + " km");
+        String ratingS = String.format("%.2f",listTb.get(position).getRating());
+        holder.tvRating.setText( ratingS+ " Star");
         RequestOptions requestOptions = new RequestOptions();
-        requestOptions.placeholder(R.drawable.logoabu).error(R.drawable.logo_tambal_ban);
+        requestOptions.placeholder(R.drawable.logo_tambal_ban).error(R.drawable.logokuning);
         Glide.with(context).load(listTb.get(position).getFotobengkel()).apply(requestOptions).into(holder.ivFoto);
+        Log.d("list" + "arb", "aaaa");
 
         holder.cvItem.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -67,14 +76,16 @@ holder.tvNama.setText(listTb.get(position).getNama());
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
-        TextView tvNama, tvAlamat, tvRating, tvJam;
+        TextView tvNama, tvAlamat, tvRating, tvJam, tvJarak;
         ImageView ivFoto;
         CardView cvItem;
+
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             tvNama = itemView.findViewById(R.id.tvNama);
             tvAlamat = itemView.findViewById(R.id.tvAlamat);
             tvJam = itemView.findViewById(R.id.tvJam);
+            tvJarak = itemView.findViewById(R.id.tvJarak);
             tvRating = itemView.findViewById(R.id.tvRating);
             ivFoto = itemView.findViewById(R.id.ivFoto);
             cvItem = itemView.findViewById(R.id.cvItem);

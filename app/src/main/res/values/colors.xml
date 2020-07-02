@@ -1,13 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#1041ba</color>
+    <color name="colorPrimary">#0053EA</color>
     <color name="colorSplash">#1041ba</color>
-    <color name="colorPrimaryDark">#3700B3</color>
-    <color name="colorAccent">#03DAC5</color>
+    <color name="colorPrimaryDark">#001CB6</color>
+    <color name="colorAccent">#EA9800</color>
+    <color name="colorPrimaryHalf">#003ED2</color>
 
-    <color name="colorPrimary2">#00796b</color>
-    <color name="colorPrimaryDark2">#00695C</color>
-    <color name="colorAccent2">#FF4081</color>
     <color name="colorBiruBack">#E5E9F4</color>
     <color name="colorBiruAtas">#6488F8</color>
     <color name="colorBiruTengah">#7294FF</color>
@@ -18,6 +16,13 @@
     <color name="lightGrey">#D3D3D3</color>
     <color name="grey">#EDEDED</color>
     <color name="darkGrey">#A5A3A3</color>
+
+    <color name="colorNavigationIcon">#dae9f6</color>
+    <color name="colorNavigationText">#ffffff</color>
+    <color name="black">#190998</color>
+    <color name="colorFont">#4A4A4A</color>
+    <color name="blueNavigation">#91A4D4</color>
+
 
 
 </resources>

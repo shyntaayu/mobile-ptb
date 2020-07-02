@@ -5,4 +5,13 @@
     <dimen name="val20dp">20dp</dimen>
     <dimen name="text20sp">20sp</dimen>
     <dimen name="val5dp">5dp</dimen>
+    <dimen name="val30dp">30dp</dimen>
+    <dimen name="sp16">16sp</dimen>
+    <dimen name="val15dp">15dp</dimen>
+    <dimen name="val100dp">100dp</dimen>
+    <dimen name="val50dp">50dp</dimen>
+    <dimen name="val60dp">60dp</dimen>
+    <dimen name="val200dp">200dp</dimen>
+    <dimen name="val150dp">150dp</dimen>
+    <dimen name="val20sp">20sp</dimen>
 </resources>

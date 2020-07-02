@@ -2,7 +2,6 @@
 package com.example.ptb.model;
 
 import com.google.gson.annotations.Expose;
-import com.google.gson.annotations.SerializedName;
 
 import javax.annotation.Generated;
 
@@ -12,10 +11,12 @@ public class Tambalban {
 
     @Expose
     private String alamat;
-    @SerializedName("created_time")
-    private Long createdTime;
+    @Expose
+    private Long createdtime;
     @Expose
     private String fotobengkel;
+    @Expose
+    private Boolean fulltime;
     @Expose
     private String jambuka;
     @Expose
@@ -41,13 +42,33 @@ public class Tambalban {
 
     private String key;
 
-    public Tambalban() {
+    public double getRating() {
+        return rating;
     }
 
-    public Tambalban(String alamat, Long createdTime, String fotobengkel, String jambuka, String jamtutup, String latitude, String longitude, String nama, Boolean status, Boolean tubles) {
+    public void setRating(double rating) {
+        this.rating = rating;
+    }
+
+    private double rating;
+
+    public String getJarak() {
+        return jarak;
+    }
+
+    public void setJarak(String jarak) {
+        this.jarak = jarak;
+    }
+
+    private String jarak;
+
+    public Tambalban(){}
+
+    public Tambalban(String alamat, Long createdtime, String fotobengkel, Boolean fulltime, String jambuka, String jamtutup, String latitude, String longitude, String nama, Boolean status, Boolean tubles) {
         this.alamat = alamat;
-        this.createdTime = createdTime;
+        this.createdtime = createdtime;
         this.fotobengkel = fotobengkel;
+        this.fulltime = fulltime;
         this.jambuka = jambuka;
         this.jamtutup = jamtutup;
         this.latitude = latitude;
@@ -65,12 +86,12 @@ public class Tambalban {
         this.alamat = alamat;
     }
 
-    public Long getCreatedTime() {
-        return createdTime;
+    public Long getCreatedtime() {
+        return createdtime;
     }
 
-    public void setCreatedTime(Long createdTime) {
-        this.createdTime = createdTime;
+    public void setCreatedtime(Long createdtime) {
+        this.createdtime = createdtime;
     }
 
     public String getFotobengkel() {
@@ -79,6 +100,14 @@ public class Tambalban {
 
     public void setFotobengkel(String fotobengkel) {
         this.fotobengkel = fotobengkel;
+    }
+
+    public Boolean getFulltime() {
+        return fulltime;
+    }
+
+    public void setFulltime(Boolean fulltime) {
+        this.fulltime = fulltime;
     }
 
     public String getJambuka() {

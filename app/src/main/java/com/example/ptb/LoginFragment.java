@@ -3,18 +3,18 @@ package com.example.ptb;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
-
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ProgressBar;
 import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -30,6 +30,8 @@ public class LoginFragment extends Fragment {
     private FirebaseAuth auth;
     private Button btnLogin;
     private SharePreferenceManager spManager;
+    private ProgressBar progressBar;
+
     public LoginFragment() {
         // Required empty public constructor
     }
@@ -43,6 +45,7 @@ public class LoginFragment extends Fragment {
         inputEmail = view.findViewById(R.id.et_email);
         inputPassword = view.findViewById(R.id.et_password);
         btnLogin = view.findViewById(R.id.btn_login);
+        progressBar = view.findViewById(R.id.progressBar);
 
         btnLogin.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -62,11 +65,13 @@ public class LoginFragment extends Fragment {
                     return;
                 }
 
+                progressBar.setVisibility(View.VISIBLE);
                 //authenticate user
                 auth.signInWithEmailAndPassword(email, password)
                         .addOnCompleteListener((Activity) getContext(), new OnCompleteListener<AuthResult>() {
                             @Override
                             public void onComplete(@NonNull Task<AuthResult> task) {
+                                progressBar.setVisibility(View.GONE);
                                 if (!task.isSuccessful()) {
                                     // there was an error
                                     if (password.length() < 6) {
@@ -86,7 +91,6 @@ public class LoginFragment extends Fragment {
             }
         });
     }
-
 
 
     @Override
