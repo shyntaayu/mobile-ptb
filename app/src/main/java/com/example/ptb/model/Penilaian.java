@@ -5,7 +5,7 @@ public class Penilaian {
     private String komentar;
     private String rating;
     private String userID;
-    private String tblID;
+    private String tbID;
     private long createdtime;
     private String key;
 
@@ -26,12 +26,12 @@ public class Penilaian {
         this.userID = userID;
     }
 
-    public String getTblID() {
-        return tblID;
+    public String getTbID() {
+        return tbID;
     }
 
-    public void setTblID(String tblID) {
-        this.tblID = tblID;
+    public void setTbID(String tbID) {
+        this.tbID = tbID;
     }
 
     public String getUser() {
@@ -42,11 +42,11 @@ public class Penilaian {
         this.username = username;
     }
 
-    public String getKomen() {
+    public String getKomentar() {
         return komentar;
     }
 
-    public void setKomen(String komentar) {
+    public void setKomentar(String komentar) {
         this.komentar = komentar;
     }
 

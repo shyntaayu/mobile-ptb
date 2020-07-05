@@ -496,6 +496,8 @@ public class ListActivity extends AppCompatActivity {
             }
         });
         // [END read_message]
+
+
     }
 
     public double getHarvesine(double lat, double lng) {
@@ -517,4 +519,5 @@ public class ListActivity extends AppCompatActivity {
     public static double toRad(double value) {
         return value * Math.PI / 180;
     }
+
 }

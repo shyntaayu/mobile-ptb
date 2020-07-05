@@ -37,7 +37,7 @@ public class PenilaianAdapter extends RecyclerView.Adapter<PenilaianAdapter.View
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         holder.tvUser.setText(listPenilaian.get(position).getUser());
         holder.ratingBar.setRating(Float.parseFloat(listPenilaian.get(position).getRating()));
-        holder.tvKomen.setText(listPenilaian.get(position).getKomen());
+        holder.tvKomen.setText(listPenilaian.get(position).getKomentar());
     }
 
     @Override

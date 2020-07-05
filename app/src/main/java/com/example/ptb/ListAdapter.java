@@ -1,6 +1,7 @@
 package com.example.ptb;
 
 import android.content.Context;
+import android.content.Intent;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -39,12 +40,15 @@ public class ListAdapter extends RecyclerView.Adapter<ListAdapter.ViewHolder> {
     }
 
     @Override
-    public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull final ViewHolder holder, int position) {
+        spManager = new SharePreferenceManager(context);
         holder.tvNama.setText(listTb.get(position).getNama());
         holder.tvAlamat.setText(listTb.get(position).getAlamat());
         holder.tvJam.setText(listTb.get(position).getJambuka() + " - " + listTb.get(position).getJamtutup());
         int rating = listTb.get(position).getTubles() ? 4 : 3;
-
+        final String tambalID = listTb.get(position).getKey();
+        Log.d("tambalID", tambalID);
+        holder.cvItem.setTag(position);
 
         holder.tvJarak.setText("Jarak : " + listTb.get(position).getJarak() + " km");
         String ratingS = String.format("%.2f",listTb.get(position).getRating());
@@ -57,7 +61,11 @@ public class ListAdapter extends RecyclerView.Adapter<ListAdapter.ViewHolder> {
         holder.cvItem.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                String tambalID = listTb.get((int)v.getTag()).getKey();
+                Log.d("tambalID", v.getTag().toString());
+                Log.d("tambalID", tambalID);
+                spManager.saveSPString("tambalID", tambalID);
+                context.startActivity(new Intent(context, DetailTambalBanActivity.class));
             }
         });
 

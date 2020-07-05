@@ -51,6 +51,10 @@ public class SharePreferenceManager {
         return sp.getString(SP_ID, "");
     }
 
+    public String getSP_Username() {
+        return sp.getString(SP_Username, "");
+    }
+
     public String getSP_Pass() {
         return sp.getString(SP_Pass, "");
     }

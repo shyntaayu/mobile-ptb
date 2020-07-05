@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,6 +21,10 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 
 /**
@@ -28,6 +33,7 @@ import com.google.firebase.auth.FirebaseAuth;
 public class LoginFragment extends Fragment {
     private EditText inputEmail, inputPassword;
     private FirebaseAuth auth;
+    private FirebaseDatabase mDatabase;
     private Button btnLogin;
     private SharePreferenceManager spManager;
     private ProgressBar progressBar;
@@ -41,6 +47,7 @@ public class LoginFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         auth = FirebaseAuth.getInstance();
         spManager = new SharePreferenceManager(getContext());
+        mDatabase = FirebaseDatabase.getInstance();
 
         inputEmail = view.findViewById(R.id.et_email);
         inputPassword = view.findViewById(R.id.et_password);
@@ -83,6 +90,23 @@ public class LoginFragment extends Fragment {
                                     spManager.saveSPString(SharePreferenceManager.SP_ID, task.getResult().getUser().getUid());
                                     spManager.saveSPString(SharePreferenceManager.SP_Username, task.getResult().getUser().getEmail());
                                     spManager.saveSPBoolean(SharePreferenceManager.SP_SUDAH_LOGIN, true);
+
+                                    mDatabase.getReference().child("users").orderByChild("email").equalTo(spManager.getSP_Username()).addListenerForSingleValueEvent(new ValueEventListener() {
+                                        @Override
+                                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                            for (DataSnapshot snapshot : dataSnapshot.getChildren()){
+                                                Log.d("userID", snapshot.getKey());
+                                                spManager.saveSPString(SharePreferenceManager.SP_ID, snapshot.getKey());
+                                                spManager.saveSPString("username", snapshot.child("username").getValue().toString());
+                                            }
+                                        }
+
+                                        @Override
+                                        public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                                        }
+                                    });
+
                                     startActivity(new Intent(getContext(), MainActivity.class)
                                             .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK));
                                 }
