@@ -154,6 +154,7 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
                 Log.d(TAG + "latlng", address);
                 spManager.saveSPString(SharePreferenceManager.SP_Address, address);
             } else {
+                Log.d(TAG + "latlng2", resultData.getString(RESULT_DATA_KEY));
                 Toast.makeText(MainActivity.this, resultData.getString(RESULT_DATA_KEY), Toast.LENGTH_SHORT).show();
             }
         }

@@ -8,6 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.cardview.widget.CardView;
@@ -51,8 +52,8 @@ public class ListAdapter extends RecyclerView.Adapter<ListAdapter.ViewHolder> {
         holder.cvItem.setTag(position);
 
         holder.tvJarak.setText("Jarak : " + listTb.get(position).getJarak() + " km");
-        String ratingS = String.format("%.2f",listTb.get(position).getRating());
-        holder.tvRating.setText( ratingS+ " Star");
+        String ratingS = String.format("%.2f", listTb.get(position).getRating());
+        holder.tvRating.setText(ratingS + " Star");
         RequestOptions requestOptions = new RequestOptions();
         requestOptions.placeholder(R.drawable.logo_tambal_ban).error(R.drawable.logokuning);
         Glide.with(context).load(listTb.get(position).getFotobengkel()).apply(requestOptions).into(holder.ivFoto);
@@ -61,11 +62,19 @@ public class ListAdapter extends RecyclerView.Adapter<ListAdapter.ViewHolder> {
         holder.cvItem.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String tambalID = listTb.get((int)v.getTag()).getKey();
-                Log.d("tambalID", v.getTag().toString());
-                Log.d("tambalID", tambalID);
-                spManager.saveSPString("tambalID", tambalID);
-                context.startActivity(new Intent(context, DetailTambalBanActivity.class));
+
+                String user = spManager.getSPString(SharePreferenceManager.SP_ID, "");
+                Log.d("tambalIDme", user);
+                if (user != "") {
+                    String tambalID = listTb.get((int) v.getTag()).getKey();
+                    Log.d("tambalID", v.getTag().toString());
+                    Log.d("tambalID", tambalID);
+                    Log.d("tambalIDme", user+"me");
+                    spManager.saveSPString("tambalID", tambalID);
+                    context.startActivity(new Intent(context, DetailTambalBanActivity.class));
+                } else {
+                    Toast.makeText(context, "Please login first to see the detail", Toast.LENGTH_LONG).show();
+                }
             }
         });
 
